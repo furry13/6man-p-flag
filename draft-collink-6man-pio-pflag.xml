@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-model href="rfc7991bis.rnc"?>  <!-- Required for schema validation and schema-aware editing -->
+<!-- <?xml-stylesheet type="text/xsl" href="rfc2629.xslt" ?> -->
+<!-- This third-party XSLT can be enabled for direct transformations in XML processors, including most browsers -->
+
+
+<!DOCTYPE rfc [
+  <!ENTITY nbsp    "&#160;">
+  <!ENTITY zwsp   "&#8203;">
+  <!ENTITY nbhy   "&#8209;">
+  <!ENTITY wj     "&#8288;">
+]>
+<!-- If further character entities are required then they should be added to the DOCTYPE above.
+     Use of an external entity file is not recommended. -->
+
+<rfc
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  category="std"
+  docName="draft-collink-6man-pio-pflag-00"
+  ipr="trust200902"
+  obsoletes=""
+  updates="4861,4862"
+  submissionType="IETF"
+  xml:lang="en"
+  version="3">
+  <front>
+<title abbrev="pio-p-flag">Signalling DHCPv6 Prefix Delegation Availability to Hosts</title>
+    <seriesInfo name="Internet-Draft" value="draft-collink-6man-pio-pflag-00"/>
+
+ <author initials="L." surname="Colitti" fullname="Lorenzo Colitti">
+      <organization>Google, LLC</organization>
+      <address>
+        <postal>
+          <street>Shibuya 3-21-3</street>
+          <country>Japan</country>
+        </postal>
+        <email>lorenzo@google.com</email>
+      </address>
+    </author>
+    <author fullname="Jen Linkova" initials="J" surname="Linkova">
+      <organization>Google</organization>
+      <address>
+        <postal>
+          <!-- Reorder these if your country does things differently -->
+          <street>1 Darling Island Rd</street>
+          <city>Pyrmont</city>
+          <region>NSW</region>
+          <code>2009</code>
+          <country>AU</country>
+        </postal>        
+        <email>furry13@gmail.com</email>  
+        <email>furry@google.com</email>  
+      </address>
+    </author>
+   
+    <date year="2023"/>
+<area>Internet</area>
+    <workgroup>IPv6 Maintenance</workgroup>
+    <keyword>ipv6</keyword>
+    <keyword>slaac</keyword>
+    <keyword>pio</keyword>
+    <keyword>dhcpv6-pd</keyword>
+
+
+    <abstract>
+ <t>
+This document defines a ‘P’ flag in the Prefix Information Option of IPv6 Router Advertisements (RAs).
+The flag is used to indicate that the network prefers that hosts acquire global addresses using DHCPv6 PD instead of using SLAAC for this prefix.
+
+</t>
+
+    </abstract>
+ 
+  </front>
+
+  <middle>
+    
+    <section>
+      <name>Introduction</name>
+<t>
+IPv6 hosts, especially mobile hosts, usually have multiple global IPv6 addresses
+ (e.g. stable addresses, privacy addresses, 464XLAT addresses, addresses for virtual systems etc).
+</t>
+
+<t>
+On large networks, individually tracking these addresses can create scalability issues for the infrastructure, because routers must maintain multiple entries (neighbor cache, SAVI mappings, VXLAN routes, etc.) for each host. 
+<xref target="I-D.collink-v6ops-ent64pd"/> discusses these challenges and proposes a solution that uses DHCPv6 PD <xref target="RFC8415"/>.
+</t>
+
+<t>
+On small networks, scaling to support multiple individual IPv6 addresses is less of a concern, because many home routers support hundreds of neighbor cache entries. On the other hand, address space is more limited compared to the number of hosts connected - the smallest home network might only have /60 prefixes, or even just a single /64.
+</t>
+
+<t>
+A host cannot know in advance which address assignment method is most appropriate for the 
+network, so there must be a mechanism for the network to communicate with this to the host.
+</t>
+    </section>
+      
+      <section>
+        <name>Requirements Language</name>
+        <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL",
+          "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT
+          RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
+          interpreted as described in BCP 14 <xref target="RFC2119"/>
+          <xref target="RFC8174"/> when, and only when, they appear in
+          all capitals, as shown here.</t>
+      </section>
+
+
+    <section anchor="rationale">
+<name>Rationale</name>
+<t>
+The information is passed to the host via a P flag in the Prefix Information Option (PIO). The reason is as follows:
+</t>
+<ul>
+<li>
+The information should be contained in the Router Advertisement because it must be available to the host before it decides to form IPv6 addresses from the prefix using SLAAC. Otherwise, the host might form IPv6 addresses from the PIO provided and start using them. This is suboptimal because if the host later acquires a prefix using DHCPv6 PD, it can either use both the prefix and SLAAC addresses, reducing the scalability benefits of using DHCPv6 PD, or can remove the SLAAC addresses, which would be disruptive for applications that are using them.
+
+</li>
+<li>
+This information is specific to the particular prefix being announced. For example, a network might want to assign global addresses via DHCPv6 PD, but use SLAAC for ULA addresses. Also, in a multihoming situation, one upstream network might choose to assign addresses via prefix delegation, and another via SLAAC.
+
+</li>
+</ul>
+
+    </section>
+<section anchor="host">
+<name>Host Behaviour</name>
+   <section anchor="track">
+   <name>Tracking and requesting prefixes</name>
+<t>
+The host SHOULD NOT use SLAAC to obtain IPv6 addresses from prefix(es) with the P bit set.
+</t>
+
+<t>
+
+For each network it is currently connected to, the host MUST keep a list of every PIO it has received with the P flag. Each time the client receives a Router Advertisement containing a PIO with the P bit set that is not in the list, and every time a previously-received PIO with the P bit set becomes deprecated:
+
+
+</t>
+<ul>
+<li>
+If the client has not previously received any delegated prefixes from the network, it SHOULD start DHCPv6 Prefix Delegation.
+
+</li>
+<li>
+If the client has already received delegated prefix(es) from one or more servers, it MUST send a RENEW request to each server, to obtain new prefixes. This allows the network to be renumbered.
+
+</li>
+</ul>
+
+<t>
+Whenever a Prefix Information Option’s Valid lifetime reaches zero, or its P flag changes to 0, the prefix is removed from the list. When there are no such prefixes, the host SHOULD stop the DHCPv6 client if it has no other reason to run it. The lifetimes of any DHCPv6 prefixes already obtained are unaffected.
+</t>
+
+<t>
+When a host requests a prefix via DHCPv6 PD, it MUST use the prefix length hint  <xref target="RFC8415" section="18.2.4"/> to request a prefix that is short enough to form addresses via SLAAC. To ensure that all DHCP relays on link can act on the delegated prefix, the host SHOULD NOT use the Rapid Commit option.
+</t>
+<t>
+The P flag is meaningless for link-local prefixes and any Prefix Information Option containing the link-local prefix MUST be ignored as specified in <xref target="RFC4862" section="5.5.3"/>.
+
+</t>
+
+   </section>
+
+<section anchor="received">
+<name>
+Using received prefix(es)
+</name>
+
+<t>
+For every delegated prefix:
+
+</t>
+
+<ul>
+<li>
+The host MAY form as many IPv6 addresses from the prefix as it chooses.
+</li>
+<li>
+The host MAY use the prefix to provide IPv6 addresses to internal components such as virtual machines or containers.
+</li>
+<li>
+If the host is capable of acting as a router, and doing so is allowed by local policy, it MAY use the prefix to allow devices directly connected to it to obtain IPv6 addresses, e.g., by sending a Router Advertisement containing the prefix to a connected interface.
+</li>
+
+</ul>
+</section>
+
+</section>
+
+<section anchor="mhoming">
+<name>
+Multihoming
+</name>
+
+<t>
+In multi-prefix multihoming, the host generally needs to associate the prefix with the router that advertised it (see for example, <xref target="RFC6724"/> Rule 5.5). If the host supports Rule 5.5, then it SHOULD associate each prefix with the link-local address of the DHCPv6 relay from which it received the packet.
+
+
+</t>
+
+</section>
+
+<section anchor="rfcchanges">
+<name>
+Modifications to RFC-Mandated Behavior 
+</name>
+
+<section>
+<name>
+Changes to RFC4861
+</name>
+<t>
+This document makes the following changes to Section 4.6.2 of <xref target="RFC4861"/>
+</t>
+<t>
+OLD TEXT:
+</t>
+<t>
+==
+</t>
+<figure align="center" anchor="fig_Option">
+<artwork align="center"><![CDATA[
+       0                   1                   2                   3
+       0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+      |     Type      |    Length     | Prefix Length |L|A| Reserved1 |
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+]]></artwork>
+		      </figure>
+
+<t>
+===
+</t>
+<t>
+NEW TEXT
+</t>
+<t>
+===
+</t>
+<figure align="center" anchor="fig_Option_new">
+<artwork align="center"><![CDATA[
+       0                   1                   2                   3
+       0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+      |     Type      |    Length     | Prefix Length |L|A|P|Reserved1|
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+]]></artwork>
+		      </figure>
+
+
+<t>
+OLD TEXT
+</t>
+<t>
+===
+</t>
+
+<t>
+
+A         1-bit autonomous address-configuration flag.  When set indicates that this prefix can be used for stateless address configuration as specified in [ADDRCONF].
+</t>
+
+<t>
+Reserved1     6-bit unused field.  It MUST be initialized to zero by the sender and MUST be ignored by the receiver.
+</t>
+
+
+<t>
+===
+</t>
+<t>
+NEW TEXT
+</t>
+<t>
+===
+</t>
+<t>
+
+A         1-bit autonomous address-configuration flag.  When set indicates that this prefix can be used for stateless address configuration as specified in [ADDRCONF].
+</t>
+<t>
+
+P             1-bit DHCPv6-PD flag. When set, indicates that this prefix SHOULD NOT be used for stateless address configuration. Instead the host SHOULD request a dedicated prefix via DHCPv6-PD and use that prefix for stateless address configuration.
+</t>
+
+<t>
+Reserved1     5-bit unused field.  It MUST be initialized to zero by the sender and MUST be ignored by the receiver.
+</t>
+
+<t>
+===
+</t>
+
+
+</section>
+<section>
+<name>
+Changes to RFC4862
+</name>
+<t>
+This document makes the following changes to Section 5.5.3 of <xref target="RFC4862"/>:
+</t>
+
+
+<t>
+OLD TEXT
+</t>
+<t>
+===
+</t>
+
+<t>
+
+For each Prefix-Information option in the Router Advertisement:
+</t>
+
+<t>
+
+    a)  If the Autonomous flag is not set, silently ignore the Prefix
+      Information option.
+</t>
+
+<t>
+===
+</t>
+<t>
+NEW TEXT
+</t>
+<t>
+===
+</t>
+<t>
+For each Prefix-Information option in the Router Advertisement:
+</t>
+<t>
+a) If the P flag is set, start the DHCPv6 PD process and use the delegated prefix to assign addresses to the interfaces as described in draft-collink-6man-pio-pflag. The Prefix Information option SHOULD be processed as if A flag is set to zero.
+</t>
+<t>
+b)If the Autonomous flag is not set, silently ignore the Prefix
+</t>
+
+
+<t>
+===
+</t>
+
+</section>
+
+
+</section>
+    
+    <section anchor="privacy">
+	    <name>Privacy Considerations</name>
+<t>
+To be added
+</t>
+    </section>
+    
+    <section anchor="IANA">
+    <!-- All drafts are required to have an IANA considerations section. See RFC 8126 for a guide.-->
+      <name>IANA Considerations</name>
+<t>This memo includes no request to IANA.</t>
+    </section>
+    
+    <section anchor="Security">
+      <!-- All drafts are required to have a security considerations section. See RFC 3552 for a guide. -->
+      <name>Security Considerations</name>
+<t>
+to be added
+</t>
+    </section>
+    
+    <!-- NOTE: The Acknowledgements and Contributors sections are at the end of this template -->
+  </middle>
+
+  <back>
+    <references>
+      <name>References</name>
+      <references>
+        <name>Normative References</name>
+        
+        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.2119.xml"/>
+        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.4861.xml"/>
+        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.4862.xml"/>
+        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.6724.xml"/>
+        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.8174.xml"/>
+        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.8415.xml"/>
+        <!-- The recommended and simplest way to include a well known reference -->
+        
+      </references>
+ 
+      <references>
+	      <name>Informative References</name>
+        <xi:include href="https://bib.ietf.org/public/rfc/bibxml3/reference.I-D.collink-v6ops-ent64pd.xml"/>
+
+      </references>
+    </references>
+    
+    <section anchor="Acknowledgements" numbered="false">
+      <!-- [REPLACE/DELETE] an Acknowledgements section is optional -->
+      <name>Acknowledgements</name>
+    </section>
+    
+    <section anchor="Contributors" numbered="false">
+      <!-- [REPLACE/DELETE] a Contributors section is optional -->
+      <name>Contributors</name>
+    </section>
+    
+ </back>
+</rfc>
