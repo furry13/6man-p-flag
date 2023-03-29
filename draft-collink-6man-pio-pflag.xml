@@ -70,6 +70,7 @@
           <country>USA</country>
         </postal>
         <email>equinox@diac24.net</email>
+        <email>equinox@opensourcerouting.org</email>
       </address>
     </author>
 
@@ -441,7 +442,7 @@ to be added
     <section anchor="Acknowledgements" numbered="false">
       <name>Acknowledgements</name>
 <t>
-Thanks to David Lamparter, Andrew McGregor, Timothy Winters for the discussions, the input and all contribution.
+Thanks to Andrew McGregor, Timothy Winters for the discussions, the input and all contribution.
 </t>
     </section>
     
