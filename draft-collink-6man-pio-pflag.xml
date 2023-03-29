@@ -238,7 +238,8 @@ Modifications to RFC-Mandated Behavior
 Changes to RFC4861
 </name>
 <t>
-This document makes the following changes to Section 4.6.2 of <xref target="RFC4861"/>
+This document makes the following changes to Section 4.6.2 of <xref target="RFC4861"/>,
+(last updated by <xref target="RFC6275"/>):
 </t>
 <t>
 OLD TEXT:
@@ -251,7 +252,7 @@ OLD TEXT:
        0                   1                   2                   3
        0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-      |     Type      |    Length     | Prefix Length |L|A| Reserved1 |
+      |     Type      |    Length     | Prefix Length |L|A|R|Reserved1|
       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 ]]></artwork>
 		      </figure>
@@ -270,7 +271,7 @@ NEW TEXT
        0                   1                   2                   3
        0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-      |     Type      |    Length     | Prefix Length |L|A|P|Reserved1|
+      |     Type      |    Length     | Prefix Length |L|A|R|P| Rsvd1 |
       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 ]]></artwork>
 		      </figure>
@@ -312,7 +313,7 @@ P             1-bit DHCPv6-PD flag. When set, indicates that this prefix SHOULD 
 </t>
 
 <t>
-Reserved1     5-bit unused field.  It MUST be initialized to zero by the sender and MUST be ignored by the receiver.
+Rsvd1         4-bit unused field.  It MUST be initialized to zero by the sender and MUST be ignored by the receiver.
 </t>
 
 <t>
@@ -387,7 +388,18 @@ To be added
     <section anchor="IANA">
     <!-- All drafts are required to have an IANA considerations section. See RFC 8126 for a guide.-->
       <name>IANA Considerations</name>
-<t>This memo includes no request to IANA.</t>
+      <t>This memo requests that IANA allocate bit 3 from the "IPv6 Neighbor
+        Discovery Prefix Information Option Flags" registry created by
+        <xref target="RFC8425"/> for use as the P flag as described in this
+        document.  The following entry should be appended:</t>
+      <table>
+        <thead>
+          <tr><th>PIO Option Bit</th><th>Description</th><th>Reference</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>3</td><td>P - DHCPv6-PD preferred flag</td><td>[THIS DOCUMENT]</td></tr>
+        </tbody>
+      </table>
     </section>
     
     <section anchor="Security">
@@ -413,6 +425,7 @@ to be added
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.6724.xml"/>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.8174.xml"/>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.8415.xml"/>
+        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.8425.xml"/>
         <!-- The recommended and simplest way to include a well known reference -->
         
       </references>
@@ -420,6 +433,7 @@ to be added
       <references>
 	      <name>Informative References</name>
         <xi:include href="https://bib.ietf.org/public/rfc/bibxml3/reference.I-D.collink-v6ops-ent64pd.xml"/>
+        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.6275.xml"/>
 
       </references>
     </references>
