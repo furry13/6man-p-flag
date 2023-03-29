@@ -62,6 +62,16 @@
         <email>xiaom@google.com</email>  
       </address>
     </author>
+<author fullname="David 'equinox' Lamparter" initials="D" surname="Lamparter">
+      <organization>NetDEF, Inc.</organization>
+      <address>
+        <postal>
+          <city>San Jose</city>
+          <country>USA</country>
+        </postal>
+        <email>equinox@diac24.net</email>
+      </address>
+    </author>
 
    
     <date year="2023"/>
@@ -156,8 +166,12 @@ If the client has not previously received any delegated prefixes from the networ
 
 </li>
 <li>
-If the client has already received delegated prefix(es) from one or more servers, it MUST send a RENEW request to each server, to obtain new prefixes. This allows the network to be renumbered.
-
+If the client has already received delegated prefix(es) from one or more
+servers, it MUST consider this change in PIOs a change in configuration
+information as described in <xref target="RFC8415" section="18.2.12"/>, i.e. it MUST perform
+a RENEW.  This allows the host to obtain new prefixes if necessary, e.g. when
+the network is being renumbered.  It also refreshes state related to the
+delegated prefix(es).
 </li>
 </ul>
 
