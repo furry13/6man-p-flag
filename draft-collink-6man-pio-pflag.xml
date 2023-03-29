@@ -180,7 +180,7 @@ Whenever a Prefix Information Option’s Valid lifetime reaches zero, or its P f
 </t>
 
 <t>
-When a host requests a prefix via DHCPv6 PD, it MUST use the prefix length hint  <xref target="RFC8415" section="18.2.4"/> to request a prefix that is short enough to form addresses via SLAAC. To ensure that all DHCP relays on link can act on the delegated prefix, the host SHOULD NOT use the Rapid Commit option.
+When a host requests a prefix via DHCPv6 PD, it MUST use the prefix length hint  <xref target="RFC8415" section="18.2.4"/> to request a prefix that is short enough to form addresses via SLAAC.
 </t>
 <t>
 The P flag is meaningless for link-local prefixes and any Prefix Information Option containing the link-local prefix MUST be ignored as specified in <xref target="RFC4862" section="5.5.3"/>.
