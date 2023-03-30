@@ -378,7 +378,15 @@ b)If the Autonomous flag is not set, silently ignore the Prefix
 
 
 </section>
-    
+
+    <section anchor="Security">
+      <!-- All drafts are required to have a security considerations section. See RFC 3552 for a guide. -->
+      <name>Security Considerations</name>
+<t>
+to be added
+</t>
+    </section>
+
     <section anchor="privacy">
 	    <name>Privacy Considerations</name>
 <t>
@@ -401,14 +409,6 @@ To be added
           <tr><td>3</td><td>P - DHCPv6-PD preferred flag</td><td>[THIS DOCUMENT]</td></tr>
         </tbody>
       </table>
-    </section>
-    
-    <section anchor="Security">
-      <!-- All drafts are required to have a security considerations section. See RFC 3552 for a guide. -->
-      <name>Security Considerations</name>
-<t>
-to be added
-</t>
     </section>
     
     <!-- NOTE: The Acknowledgements and Contributors sections are at the end of this template -->
