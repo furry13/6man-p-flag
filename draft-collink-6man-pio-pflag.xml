@@ -378,12 +378,28 @@ b)If the Autonomous flag is not set, silently ignore the Prefix
 
 
 </section>
-    
-    <section anchor="privacy">
-	    <name>Privacy Considerations</name>
+
+    <section anchor="Security">
+      <!-- All drafts are required to have a security considerations section. See RFC 3552 for a guide. -->
+      <name>Security Considerations</name>
 <t>
-To be added
+to be added
 </t>
+    </section>
+
+    <section anchor="privacy">
+      <name>Privacy Considerations</name>
+      <t>
+        Implementing the P flag on a host / receiving side enables other
+        systems on the network to trigger running DHCPv6 on that network.
+        Doing so may reveal some minor additional information about the host,
+        most prominently the hostname. This is the same consideration as for
+        the M flag.
+      </t>
+      <t>
+        No privacy considerations result from supporting the P flag on the
+        sender side.
+      </t>
     </section>
     
     <section anchor="IANA">
@@ -401,14 +417,6 @@ To be added
           <tr><td>3</td><td>P - DHCPv6-PD preferred flag</td><td>[THIS DOCUMENT]</td></tr>
         </tbody>
       </table>
-    </section>
-    
-    <section anchor="Security">
-      <!-- All drafts are required to have a security considerations section. See RFC 3552 for a guide. -->
-      <name>Security Considerations</name>
-<t>
-to be added
-</t>
     </section>
     
     <!-- NOTE: The Acknowledgements and Contributors sections are at the end of this template -->
