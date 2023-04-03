@@ -194,6 +194,9 @@ When a host requests a prefix via DHCPv6 PD, it MUST use the prefix length hint 
 The P flag is meaningless for link-local prefixes and any Prefix Information Option containing the link-local prefix MUST be ignored as specified in <xref target="RFC4862" section="5.5.3"/>.
 
 </t>
+	   <t>
+		   If the host doesn't obtain any prefixes via DHCPv6 PD it MAY choose, as a fallback mechanism, to form addresses via SLAAC using PIOs with A flag set to 1.
+	   </t>
 
    </section>
 
