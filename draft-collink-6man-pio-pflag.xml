@@ -147,6 +147,13 @@ This information is specific to the particular prefix being announced. For examp
 </ul>
 
     </section>
+<section anchor="Router">
+<name>Router Behaviour</name>
+<t>
+The router SHOULD set P flag to zero by default, unless explicitly configured by the administrator.
+The router SHOULD have a configuration knob to set the P flag value for the given prefix.
+</t>
+</section>
 <section anchor="host">
 <name>Host Behaviour</name>
    <section anchor="track">
