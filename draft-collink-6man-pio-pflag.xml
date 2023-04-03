@@ -222,7 +222,11 @@ Multihoming
 </name>
 
 <t>
-In multi-prefix multihoming, the host generally needs to associate the prefix with the router that advertised it (see for example, <xref target="RFC6724"/> Rule 5.5). If the host supports Rule 5.5, then it SHOULD associate each prefix with the link-local address of the DHCPv6 relay from which it received the packet.
+In multi-prefix multihoming, the host generally needs to associate the prefix with the router that advertised it (see for example, <xref target="RFC6724"/> Rule 5.5). If the host supports Rule 5.5, then it SHOULD associate each prefix with the link-local address of the DHCPv6 relay from which it received the REPLY packet.
+When receiving multiple REPLYs carrying the same prefix from distinct
+link-local addresses, the host SHOULD associate that prefix with all of these
+addresses.  This can commonly happen in networks with redundant routers and
+DHCPv6 relays.
 
 
 </t>
