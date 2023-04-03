@@ -189,14 +189,14 @@ Whenever a Prefix Information Option’s Valid lifetime reaches zero, or its P f
 
 <t>
 When a host requests a prefix via DHCPv6 PD, it MUST use the prefix length hint  <xref target="RFC8415" section="18.2.4"/> to request a prefix that is short enough to form addresses via SLAAC.
-</t>
-<t>
+
+	 </t>
+	   
+	   
+	   <t>
 The P flag is meaningless for link-local prefixes and any Prefix Information Option containing the link-local prefix MUST be ignored as specified in <xref target="RFC4862" section="5.5.3"/>.
 
 </t>
-	   <t>
-		   If the host doesn't obtain any prefixes via DHCPv6 PD it MAY choose, as a fallback mechanism, to form addresses via SLAAC using PIOs with A flag set to 1.
-	   </t>
 
    </section>
 
@@ -205,9 +205,12 @@ The P flag is meaningless for link-local prefixes and any Prefix Information Opt
 Using received prefix(es)
 </name>
 
+	<t>
+		If the received prefix is long to be used for SLAAC, the host MUST ignore it and issue a DECLINE.
+	If the prefix is shorter than required for SLAAC, the host SHOULD accept it, allocate one or more longer prefix suitable for SLAAC and use the prefixes as described below.
+	</t>
 <t>
-For every delegated prefix:
-
+For every accepted prefix:
 </t>
 
 <ul>
@@ -222,6 +225,11 @@ If the host is capable of acting as a router, and doing so is allowed by local p
 </li>
 
 </ul>
+	
+		   <t>
+		   If the host doesn't obtain any suitable prefixes via DHCPv6 PD it MAY choose, as a fallback mechanism, to form addresses via SLAAC using PIOs with A flag set to 1.
+	   </t>
+
 </section>
 
 </section>
