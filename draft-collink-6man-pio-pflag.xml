@@ -16,7 +16,7 @@
 <rfc
   xmlns:xi="http://www.w3.org/2001/XInclude"
   category="std"
-  docName="draft-collink-6man-pio-pflag-00"
+  docName="draft-collink-6man-pio-pflag-01"
   ipr="trust200902"
   obsoletes=""
   updates="4861,4862"
@@ -106,7 +106,7 @@ IPv6 hosts, especially mobile hosts, usually have multiple global IPv6 addresses
 
 <t>
 On large networks, individually tracking these addresses can create scalability issues for the infrastructure, because routers must maintain multiple entries (neighbor cache, SAVI mappings, VXLAN routes, etc.) for each host. 
-<xref target="I-D.collink-v6ops-ent64pd"/> discusses these challenges and proposes a solution that uses DHCPv6 PD <xref target="RFC8415"/>.
+<xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> discusses these challenges and proposes a solution that uses DHCPv6 PD <xref target="RFC8415"/>.
 </t>
 
 <t>
@@ -133,6 +133,7 @@ network, so there must be a mechanism for the network to communicate with this t
     <section anchor="rationale">
 <name>Rationale</name>
 <t>
+As described above, if the network supports both SLAAC and DHCPv6-PD, the network administrator might want to indicate to hosts that DHCPv6-PD address assignemnt (see <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/>) should be preferred over SLAAC.
 The information is passed to the host via a P flag in the Prefix Information Option (PIO). The reason is as follows:
 </t>
 <ul>
@@ -406,6 +407,7 @@ a) If the P flag is set, start the DHCPv6 PD process and use the delegated prefi
 		    The attacker might force hosts to oscillate between DHCPv6 PD and PIO-based SLAAC by sending the same set of PIOs with and then w/o P flag set.
 		    That would cause the clients to issue REBIND requests, increasing the load on the DHCP infrastructure. 
 		    However Section 14.1 of <xref target="RFC8415"/> requires that DHCPv6 PD clients rate limit transmitted DHCPv6 messages.
+</t>
 		    
 	    <t>
 		    It should be noted that if the network allows rogue RAs to be sent, the attacker would be able to disrupt hosts connectivity anyway, so this document doesn't introduce any fundamentally new security considerations.
@@ -467,7 +469,7 @@ a) If the P flag is set, start the DHCPv6 PD process and use the delegated prefi
       <references>
 	      <name>Informative References</name>
 	      <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.6105.xml"/>
-        <xi:include href="https://bib.ietf.org/public/rfc/bibxml3/reference.I-D.collink-v6ops-ent64pd.xml"/>
+        <xi:include href="https://bib.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-v6ops-dhcp-pd-per-device.xml"/>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.6275.xml"/>
 
       </references>
