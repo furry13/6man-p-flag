@@ -160,7 +160,7 @@ The router SHOULD have a configuration knob to set the P flag value for the give
    <section anchor="track">
    <name>Tracking and requesting prefixes</name>
 <t>
-If all the PIOs received by the device on a given interface have P flag set to zero, the device SHOULD NOT run DHCPv6 PD on that interface unless the device is explicitly configured to do so or the device's primary purpose is to provide connectivity to other devices (e.g. CE routers as described by <xtref target="RFC7084"/>).
+If all the PIOs received by the device on a given interface have P flag set to zero, the device SHOULD NOT run DHCPv6 PD on that interface unless the device is explicitly configured to do so or the device's primary purpose is to provide connectivity to other devices (e.g. CE routers as described by <xref target="RFC7084"/>).
 </t>
 <t>
 The host SHOULD NOT use SLAAC to obtain IPv6 addresses from prefix(es) with the P bit set.
