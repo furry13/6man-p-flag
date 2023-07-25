@@ -164,8 +164,6 @@ The host SHOULD NOT use SLAAC to obtain IPv6 addresses from prefix(es) with the 
 </t>
 
 <t>
-If a device is explicitly configured to run DHCPv6 PD, or the device's primary purpose is to provide connectivity to other devices (e.g., if it is a CE router as described by <xref target="RFC7084"/>, then it SHOULD run DHCPv6 PD regardless of the values of the P flag contained in the Router Adveritsements it receives.</t>
-<t>
 Otherwise, for each interface, the host MUST keep a list of every PIO it has received with the P flag. Each time the client receives a Router Advertisement containing a PIO with the P bit set that is not in the list, and every time a previously-received PIO with the P bit set becomes deprecated:
 
 
@@ -234,6 +232,19 @@ If the host is capable of acting as a router, and doing so is allowed by local p
 
 </section>
 
+<section anchor="p0">
+<name>Absence of PIOs with P bit set</name>
+<t>
+The P bit is purely a positive indicator, telling nodes that DHCPv6
+Prefix Delegation is available and the network prefers the node use it.
+The absence of any PIOs with the P bit does not carry any kind of signal to
+the opposite, and MUST NOT be processed to mean that DHCPv6-PD is absent.  In
+particular, nodes that are already running DHCPv6 PD either by explicit
+configuration or by default MUST NOT disable DHCPv6 PD on the absence of PIOs
+with the P bit set.  A very common example of this are CE routers as described
+by <xref target="RFC7084"/>.
+</t>
+</section>
 </section>
 
 <section anchor="mhoming">
