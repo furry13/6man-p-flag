@@ -87,7 +87,7 @@
     <abstract>
  <t>
 This document defines a ‘P’ flag in the Prefix Information Option of IPv6 Router Advertisements (RAs).
-The flag is used to indicate that the network prefers that hosts acquire global addresses using DHCPv6 PD instead of using SLAAC for this prefix.
+The flag is used to indicate that the network prefers that nodes acquire global addresses using DHCPv6 PD instead of using SLAAC for this prefix.
 
 </t>
 
@@ -100,22 +100,22 @@ The flag is used to indicate that the network prefers that hosts acquire global 
     <section>
       <name>Introduction</name>
 <t>
-IPv6 hosts, especially mobile hosts, usually have multiple global IPv6 addresses
+IPv6 nodes, especially mobile nodes, usually have multiple global IPv6 addresses
  (e.g. stable addresses, privacy addresses, 464XLAT addresses, addresses for virtual systems etc).
 </t>
 
 <t>
-On large networks, individually tracking these addresses can create scalability issues for the infrastructure, because routers must maintain multiple entries (neighbor cache, SAVI mappings, VXLAN routes, etc.) for each host. 
+On large networks, individually tracking these addresses can create scalability issues for the infrastructure, because routers must maintain multiple entries (neighbor cache, SAVI mappings, VXLAN routes, etc.) for each node.
 <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> discusses these challenges and proposes a solution that uses DHCPv6 PD <xref target="RFC8415"/>.
 </t>
 
 <t>
-On small networks, scaling to support multiple individual IPv6 addresses is less of a concern, because many home routers support hundreds of neighbor cache entries. On the other hand, address space is more limited compared to the number of hosts connected - the smallest home network might only have /60 prefixes, or even just a single /64.
+On small networks, scaling to support multiple individual IPv6 addresses is less of a concern, because many home routers support hundreds of neighbor cache entries. On the other hand, address space is more limited compared to the number of nodes connected - the smallest home network might only have /60 prefixes, or even just a single /64.
 </t>
 
 <t>
-A host cannot know in advance which address assignment method is most appropriate for the 
-network, so there must be a mechanism for the network to communicate with this to the host.
+A node cannot know in advance which address assignment method is most appropriate for the
+network, so there must be a mechanism for the network to communicate this to the node.
 </t>
     </section>
       
@@ -129,16 +129,15 @@ network, so there must be a mechanism for the network to communicate with this t
           all capitals, as shown here.</t>
       </section>
 
-
     <section anchor="rationale">
 <name>Rationale</name>
 <t>
-As described above, if the network supports both SLAAC and DHCPv6-PD, the network administrator might want to indicate to hosts that DHCPv6-PD address assignemnt (see <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/>) should be preferred over SLAAC.
-The information is passed to the host via a P flag in the Prefix Information Option (PIO). The reason is as follows:
+As described above, if the network supports both SLAAC and DHCPv6-PD, the network administrator might want to indicate to nodes that DHCPv6-PD address assignemnt (see <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/>) should be preferred over SLAAC.
+The information is passed to the node via a P flag in the Prefix Information Option (PIO). The reason is as follows:
 </t>
 <ul>
 <li>
-The information should be contained in the Router Advertisement because it must be available to the host before it decides to form IPv6 addresses from the prefix using SLAAC. Otherwise, the host might form IPv6 addresses from the PIO provided and start using them. This is suboptimal because if the host later acquires a prefix using DHCPv6 PD, it can either use both the prefix and SLAAC addresses, reducing the scalability benefits of using DHCPv6 PD, or can remove the SLAAC addresses, which would be disruptive for applications that are using them.
+The information should be contained in the Router Advertisement because it must be available to the node before it decides to form IPv6 addresses from the prefix using SLAAC. Otherwise, the node might form IPv6 addresses from the PIO provided and start using them. This is suboptimal because if the node later acquires a prefix using DHCPv6 PD, it can either use both the prefix and SLAAC addresses, reducing the scalability benefits of using DHCPv6 PD, or can remove the SLAAC addresses, which would be disruptive for applications that are using them.
 
 </li>
 <li>
@@ -155,16 +154,16 @@ The router SHOULD set P flag to zero by default, unless explicitly configured by
 The router SHOULD have a configuration knob to set the P flag value for the given prefix.
 </t>
 </section>
-<section anchor="host">
-<name>Host Behaviour</name>
+<section anchor="node">
+<name>Node Behaviour</name>
    <section anchor="track">
    <name>Tracking and requesting prefixes</name>
 <t>
-The host SHOULD NOT use SLAAC to obtain IPv6 addresses from prefix(es) with the P bit set.
+The node SHOULD NOT use SLAAC to obtain IPv6 addresses from prefix(es) with the P bit set.
 </t>
 
 <t>
-Otherwise, for each interface, the host MUST keep a list of every PIO it has received with the P flag. Each time the client receives a Router Advertisement containing a PIO with the P bit set that is not in the list, and every time a previously-received PIO with the P bit set becomes deprecated:
+Otherwise, for each interface, the node MUST keep a list of every PIO it has received with the P flag. Each time the client receives a Router Advertisement containing a PIO with the P bit set that is not in the list, and every time a previously-received PIO with the P bit set becomes deprecated:
 
 
 </t>
@@ -177,18 +176,18 @@ If the client has not previously received any delegated prefixes from the networ
 If the client has already received delegated prefix(es) from one or more
 servers, it MUST consider this change in PIOs a change in configuration
 information as described in <xref target="RFC8415" section="18.2.12"/>, i.e. it MUST perform
-a REBIND.  This allows the host to obtain new prefixes if necessary, e.g. when
+a REBIND.  This allows the node to obtain new prefixes if necessary, e.g. when
 the network is being renumbered.  It also refreshes state related to the
 delegated prefix(es).
 </li>
 </ul>
 
 <t>
-Whenever a Prefix Information Option’s Valid lifetime reaches zero, or its P flag changes to 0, the prefix is removed from the list. When there are no such prefixes, the host SHOULD stop the DHCPv6 client if it has no other reason to run it. The lifetimes of any DHCPv6 prefixes already obtained are unaffected.
+Whenever a Prefix Information Option’s Valid lifetime reaches zero, or its P flag changes to 0, the prefix is removed from the list. When there are no such prefixes, the node SHOULD stop the DHCPv6 client if it has no other reason to run it. The lifetimes of any DHCPv6 prefixes already obtained are unaffected.
 </t>
 
 <t>
-When a host requests a prefix via DHCPv6 PD, it MUST use the prefix length hint  <xref target="RFC8415" section="18.2.4"/> to request a prefix that is short enough to form addresses via SLAAC.
+When a node requests a prefix via DHCPv6 PD, it MUST use the prefix length hint  <xref target="RFC8415" section="18.2.4"/> to request a prefix that is short enough to form addresses via SLAAC.
 
 	 </t>
 	   
@@ -206,8 +205,8 @@ Using received prefix(es)
 </name>
 
 	<t>
-		If the received prefix is long to be used for SLAAC, the host MUST ignore it and issue a DECLINE.
-	If the prefix is shorter than required for SLAAC, the host SHOULD accept it, allocate one or more longer prefix suitable for SLAAC and use the prefixes as described below.
+		If the received prefix is long to be used for SLAAC, the node MUST ignore it and issue a DECLINE.
+	If the prefix is shorter than required for SLAAC, the node SHOULD accept it, allocate one or more longer prefix suitable for SLAAC and use the prefixes as described below.
 	</t>
 <t>
 For every accepted prefix:
@@ -215,19 +214,19 @@ For every accepted prefix:
 
 <ul>
 <li>
-The host MAY form as many IPv6 addresses from the prefix as it chooses.
+The node MAY form as many IPv6 addresses from the prefix as it chooses.
 </li>
 <li>
-The host MAY use the prefix to provide IPv6 addresses to internal components such as virtual machines or containers.
+The node MAY use the prefix to provide IPv6 addresses to internal components such as virtual machines or containers.
 </li>
 <li>
-If the host is capable of acting as a router, and doing so is allowed by local policy, it MAY use the prefix to allow devices directly connected to it to obtain IPv6 addresses, e.g., by sending a Router Advertisement containing the prefix to a connected interface.
+If the node is capable of acting as a router, and doing so is allowed by local policy, it MAY use the prefix to allow nodes directly connected to it to obtain IPv6 addresses, e.g., by sending a Router Advertisement containing the prefix to a connected interface.
 </li>
 
 </ul>
 	
 		   <t>
-		   If the host doesn't obtain any suitable prefixes via DHCPv6 PD it MAY choose, as a fallback mechanism, to form addresses via SLAAC using PIOs with A flag set to 1.
+		   If the node doesn't obtain any suitable prefixes via DHCPv6 PD it MAY choose, as a fallback mechanism, to form addresses via SLAAC using PIOs with A flag set to 1.
 	   </t>
 
 </section>
@@ -253,9 +252,9 @@ Multihoming
 </name>
 
 <t>
-In multi-prefix multihoming, the host generally needs to associate the prefix with the router that advertised it (see for example, <xref target="RFC6724"/> Rule 5.5). If the host supports Rule 5.5, then it SHOULD associate each prefix with the link-local address of the DHCPv6 relay from which it received the REPLY packet.
+In multi-prefix multihoming, the node generally needs to associate the prefix with the router that advertised it (see for example, <xref target="RFC6724"/> Rule 5.5). If the node supports Rule 5.5, then it SHOULD associate each prefix with the link-local address of the DHCPv6 relay from which it received the REPLY packet.
 When receiving multiple REPLYs carrying the same prefix from distinct
-link-local addresses, the host SHOULD associate that prefix with all of these
+link-local addresses, the node SHOULD associate that prefix with all of these
 addresses.  This can commonly happen in networks with redundant routers and
 DHCPv6 relays.
 
@@ -345,7 +344,7 @@ A         1-bit autonomous address-configuration flag.  When set indicates that 
 </t>
 <t>
 
-P             1-bit DHCPv6-PD flag. When set, indicates that this prefix SHOULD NOT be used for stateless address configuration. Instead the host SHOULD request a dedicated prefix via DHCPv6-PD and use that prefix for stateless address configuration.
+P             1-bit DHCPv6-PD flag. When set, indicates that this prefix SHOULD NOT be used for stateless address configuration. Instead the node SHOULD request a dedicated prefix via DHCPv6-PD and use that prefix for stateless address configuration.
 </t>
 
 <t>
@@ -412,26 +411,26 @@ a) If the P flag is set, start the DHCPv6 PD process and use the delegated prefi
       <name>Security Considerations</name>
 <t>
 	The mechanism described in this document relies on the information provided in the Router Advertisement and therefore shares the same security model as SLAAC.
-	If the network doesn't implement RA Guard <xref target="RFC6105"/>, an attacker might sent RAs containing the PIO used by the network, set P flag to 1 and force hosts to ignore A flag. 
-	In the absense of DHCPv6 PD infrastructure, hosts would experience delays in obtaining IPv6 addresses (as no delegated prefixes are available, hosts MAY choose to fallback to SLAAC).
+	If the network doesn't implement RA Guard <xref target="RFC6105"/>, an attacker might sent RAs containing the PIO used by the network, set P flag to 1 and force nodes to ignore A flag.
+	In the absense of DHCPv6 PD infrastructure, nodes would experience delays in obtaining IPv6 addresses (as no delegated prefixes are available, nodes MAY choose to fallback to SLAAC).
 </t>
 	    <t>
-		    The attacker might force hosts to oscillate between DHCPv6 PD and PIO-based SLAAC by sending the same set of PIOs with and then w/o P flag set.
+		    The attacker might force nodes to oscillate between DHCPv6 PD and PIO-based SLAAC by sending the same set of PIOs with and then w/o P flag set.
 		    That would cause the clients to issue REBIND requests, increasing the load on the DHCP infrastructure. 
 		    However Section 14.1 of <xref target="RFC8415"/> requires that DHCPv6 PD clients rate limit transmitted DHCPv6 messages.
 </t>
 		    
 	    <t>
-		    It should be noted that if the network allows rogue RAs to be sent, the attacker would be able to disrupt hosts connectivity anyway, so this document doesn't introduce any fundamentally new security considerations.
+		    It should be noted that if the network allows rogue RAs to be sent, the attacker would be able to disrupt nodes connectivity anyway, so this document doesn't introduce any fundamentally new security considerations.
 	    </t>
     </section>
 
     <section anchor="privacy">
       <name>Privacy Considerations</name>
       <t>
-        Implementing the P flag on a host / receiving side enables other
+        Implementing the P flag on a node / receiving side enables other
         systems on the network to trigger running DHCPv6 on that network.
-        Doing so may reveal some minor additional information about the host,
+        Doing so may reveal some minor additional information about the node,
         most prominently the hostname. This is the same consideration as for
         the M flag.
       </t>
@@ -474,6 +473,7 @@ a) If the P flag is set, start the DHCPv6 PD process and use the delegated prefi
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.8174.xml"/>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.8415.xml"/>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.8425.xml"/>
+        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.8504.xml"/>
         <!-- The recommended and simplest way to include a well known reference -->
         
       </references>
