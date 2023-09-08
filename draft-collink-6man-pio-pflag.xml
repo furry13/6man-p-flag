@@ -206,7 +206,7 @@ Using received prefix(es)
 </name>
 
 	<t>
-		If the received prefix is long to be used for SLAAC, the host MUST ignore it and issue a DECLINE.
+		If the received prefix is too long to be used for SLAAC, the host MUST ignore it.
 	If the prefix is shorter than required for SLAAC, the host SHOULD accept it, allocate one or more longer prefix suitable for SLAAC and use the prefixes as described below.
 	</t>
 <t>
