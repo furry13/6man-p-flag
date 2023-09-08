@@ -107,10 +107,12 @@ IPv6 hosts, especially mobile hosts, usually have multiple global IPv6 addresses
 <t>
 On large networks, individually tracking these addresses can create scalability issues for the infrastructure, because routers must maintain multiple entries (neighbor cache, SAVI mappings, VXLAN routes, etc.) for each host. 
 <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> discusses these challenges and proposes a solution that uses DHCPv6 PD <xref target="RFC8415"/>.
+Such networks might support SLAAC for backwards compatibility reasons, so both SLAAC and DHCPv6-PD soliution are available for the host.
 </t>
 
 <t>
 On small networks, scaling to support multiple individual IPv6 addresses is less of a concern, because many home routers support hundreds of neighbor cache entries. On the other hand, address space is more limited compared to the number of hosts connected - the smallest home network might only have /60 prefixes, or even just a single /64.
+Hence while DHCPv6 PD is available for the hosts, it might be desirable for the hosts to use SLAAC instead. 
 </t>
 
 <t>
@@ -129,12 +131,15 @@ network, so there must be a mechanism for the network to communicate with this t
           all capitals, as shown here.</t>
       </section>
 
-
     <section anchor="rationale">
-<name>Rationale</name>
+<name>Solution Overview and Rationale</name>
 <t>
 As described above, if the network supports both SLAAC and DHCPv6-PD, the network administrator might want to indicate to hosts that DHCPv6-PD address assignemnt (see <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/>) should be preferred over SLAAC.
-The information is passed to the host via a P flag in the Prefix Information Option (PIO). The reason is as follows:
+This document proposes a new flap ("P) to be added to the Prefix Information Option (PIO) to convey such signalling to hosts.
+When the network provides a PIO to be used for SLAAC but the administrator doesn't want the host to form addresses from that prefix but rather use DHCPv-PD instead, the P flag in that PIO is set to "1".
+</t>
+<t>
+The reasons to signal the preference as a PIO flag are as follows:
 </t>
 <ul>
 <li>
@@ -146,8 +151,7 @@ This information is specific to the particular prefix being announced. For examp
 
 </li>
 </ul>
-
-    </section>
+</section>
 <section anchor="Router">
 <name>Router Behaviour</name>
 <t>
