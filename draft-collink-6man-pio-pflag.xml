@@ -16,7 +16,7 @@
 <rfc
   xmlns:xi="http://www.w3.org/2001/XInclude"
   category="std"
-  docName="draft-collink-6man-pio-pflag-01"
+  docName="draft-collink-6man-pio-pflag-02"
   ipr="trust200902"
   obsoletes=""
   updates="4861,4862"
@@ -87,8 +87,7 @@
     <abstract>
  <t>
 This document defines a ‘P’ flag in the Prefix Information Option of IPv6 Router Advertisements (RAs).
-The flag is used to indicate that the network prefers that hosts acquire global addresses using DHCPv6 PD instead of using SLAAC for this prefix.
-
+The flag is used to indicate that the network prefers that hosts do not use the prefix provided in the PIO for SLAAC but request a prefix via DHCPv6 PD instead, and use that delegated prefix to form addresses.
 </t>
 
     </abstract>
@@ -100,22 +99,25 @@ The flag is used to indicate that the network prefers that hosts acquire global 
     <section>
       <name>Introduction</name>
 <t>
-IPv6 hosts, especially mobile hosts, usually have multiple global IPv6 addresses
- (e.g. stable addresses, privacy addresses, 464XLAT addresses, addresses for virtual systems etc).
+IPv6 hosts, especially mobile hosts, usually have multiple global IPv6 addresses, such as stable addresses (<xref target="RFC8064"/>), temporary addresses (<xref target="RFC8981"/>), 464XLAT addresses (<xref target="RFC6877"/>), addresses for virtual systems.
 </t>
 
 <t>
-On large networks, individually tracking these addresses can create scalability issues for the infrastructure, because routers must maintain multiple entries (neighbor cache, SAVI mappings, VXLAN routes, etc.) for each host. 
-<xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> discusses these challenges and proposes a solution that uses DHCPv6 PD <xref target="RFC8415"/>.
+On large broadcast networks (such as enterprise or public Wi-Fi deployments) which place many devices on a shared link with a single on-link prefix, multiple addresses per host creates scalability issues, as the network infrastructure devices need to maintain state per address: IPv6 neighbor cache, SAVI mappingsi (<xref target="RFC7039"/>), VXLAN routes, etc.
+<xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> discusses these challenges and proposes a solution that uses DHCPv6 PD <xref target="RFC8415"/> to provide a client with a dedicated prefix, which can be used to form addresses.
 </t>
 
 <t>
-On small networks, scaling to support multiple individual IPv6 addresses is less of a concern, because many home routers support hundreds of neighbor cache entries. On the other hand, address space is more limited compared to the number of hosts connected - the smallest home network might only have /60 prefixes, or even just a single /64.
+On small networks, scaling to support multiple individual IPv6 addresses is less of a concern, because many home routers support hundreds of neighbor cache entries.
+On the other hand, address space is more limited compared to the number of hosts connected - the smallest home network might only have /60 prefixes, or even just a single /64.
+In such networks delegating an unique prefix per client would not provide any notable scalability benefits and would introduce a risk of address exhaustion.
+
 </t>
 
 <t>
-A host cannot know in advance which address assignment method is most appropriate for the 
-network, so there must be a mechanism for the network to communicate with this to the host.
+When a host conects to a network which provides a shared prefix in PIO to be used for SLAAC and also supports delegating per-host prefix via DHCPv6 PD,
+the host cannot know in advance which address assignment method is most appropriate for the network.
+It's desirable to have a mechanism for the network to communicate the preference to the host.
 </t>
     </section>
       
@@ -133,16 +135,18 @@ network, so there must be a mechanism for the network to communicate with this t
     <section anchor="rationale">
 <name>Rationale</name>
 <t>
-As described above, if the network supports both SLAAC and DHCPv6-PD, the network administrator might want to indicate to hosts that DHCPv6-PD address assignemnt (see <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/>) should be preferred over SLAAC.
+The network administrator might want to indicate to hosts that requesting a prefix via DHCPv6-PD and using that prefix for address assignemnt (see <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/>) should be preferred over forming SLAAC addresses from the prefix provided in the PIO.
 The information is passed to the host via a P flag in the Prefix Information Option (PIO). The reason is as follows:
 </t>
 <ul>
 <li>
-The information should be contained in the Router Advertisement because it must be available to the host before it decides to form IPv6 addresses from the prefix using SLAAC. Otherwise, the host might form IPv6 addresses from the PIO provided and start using them. This is suboptimal because if the host later acquires a prefix using DHCPv6 PD, it can either use both the prefix and SLAAC addresses, reducing the scalability benefits of using DHCPv6 PD, or can remove the SLAAC addresses, which would be disruptive for applications that are using them.
+The information should be contained in the Router Advertisement because it must be available to the host before it decides to form IPv6 addresses from the PIO prefix using SLAAC. Otherwise, the host might form IPv6 addresses from the PIO provided and start using them, even if a unique per-host prefix is available via DHCPv6 PD.
+This is suboptimal because if the host later acquires a prefix using DHCPv6 PD, it can either use both the prefix and SLAAC addresses, reducing the scalability benefits of using DHCPv6 PD, or can remove the SLAAC addresses, which would be disruptive for applications that are using them.
 
 </li>
 <li>
-This information is specific to the particular prefix being announced. For example, a network might want to assign global addresses via DHCPv6 PD, but use SLAAC for ULA addresses. Also, in a multihoming situation, one upstream network might choose to assign addresses via prefix delegation, and another via SLAAC.
+This information is specific to the particular prefix being announced. For example, a network administrator might want hosts to assign global addresses from delegated prefixes, but use the PIO prefix to form ULA addresses.
+Also, in a multihoming situation, one upstream network might choose to assign prefixes via prefix delegation, and another via PIOs.
 
 </li>
 </ul>
@@ -483,7 +487,11 @@ a) If the P flag is set, start the DHCPv6 PD process and use the delegated prefi
 	      <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.6105.xml"/>
         <xi:include href="https://bib.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-v6ops-dhcp-pd-per-device.xml"/>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.6275.xml"/>
+        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.6877.xml"/>
 	      <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.7084.xml"/>
+	      <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.7039.xml"/>
+        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.8064.xml"/>
+        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.8981.xml"/>
 
       </references>
     </references>
