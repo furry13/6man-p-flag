@@ -151,6 +151,8 @@ Also, in a multihoming situation, one upstream network might choose to assign pr
 </li>
 </ul>
 
+<t>Note that the prefix(es) that the client obtains via DHCPv6 PD are not related in any way to the prefix(es) in the Router Advertisement which have the P bit set.</t>
+
     </section>
 <section anchor="Router">
 <name>Router Behaviour</name>
