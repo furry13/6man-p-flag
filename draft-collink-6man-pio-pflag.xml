@@ -103,7 +103,7 @@ IPv6 hosts, especially mobile hosts, usually have multiple global IPv6 addresses
 </t>
 
 <t>
-On large broadcast networks (such as enterprise or public Wi-Fi deployments) which place many devices on a shared link with a single on-link prefix, multiple addresses per host creates scalability issues, as the network infrastructure devices need to maintain state per address: IPv6 neighbor cache, SAVI mappingsi (<xref target="RFC7039"/>), VXLAN routes, etc.
+On large broadcast networks (such as enterprise or public Wi-Fi deployments) which place many devices on a shared link with a single on-link prefix, multiple addresses per host creates scalability issues, as the network infrastructure devices need to maintain state per address: IPv6 neighbor cache, SAVI mappings (<xref target="RFC7039"/>), VXLAN routes, etc.
 <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> discusses these challenges and proposes a solution that uses DHCPv6 PD <xref target="RFC8415"/> to provide a client with a dedicated prefix, which can be used to form addresses.
 </t>
 
@@ -115,7 +115,7 @@ In such networks delegating an unique prefix per client would not provide any no
 </t>
 
 <t>
-When a host conects to a network which provides a shared prefix in PIO to be used for SLAAC and also supports delegating per-host prefix via DHCPv6 PD,
+When a host connects to a network which provides a shared prefix in PIO to be used for SLAAC and also supports delegating per-host prefix via DHCPv6 PD,
 the host cannot know in advance which address assignment method is most appropriate for the network.
 It's desirable to have a mechanism for the network to communicate the preference to the host.
 </t>
