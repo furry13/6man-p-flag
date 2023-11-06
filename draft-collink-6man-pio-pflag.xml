@@ -252,6 +252,14 @@ with the P bit set.  A very common example of this are CE routers as described
 by <xref target="RFC7084"/>.
 </t>
 </section>
+
+<section anchor="addrselect">
+<name>Source Address Selection</name>
+<t>
+For the purpose of source address selection <xref target="RFC6724"/>, if the host forms addresses from a delegated prefix, it SHOULD treat those addresses as if they were assigned to the interface on which the prefix was received. This includes placing them in the candidate set, and associating them with the outgoing interface when implementing rule 5.
+</t>
+</section>
+
 </section>
 
 <section anchor="mhoming">
