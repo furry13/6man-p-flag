@@ -1,4 +1,4 @@
-FILENAME := draft-collink-6man-pio-pflag
+FILENAME := draft-ietf-6man-pio-pflag
 
 $(FILENAME).txt:
 	xml2rfc $(FILENAME).xml
