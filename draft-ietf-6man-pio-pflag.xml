@@ -172,7 +172,7 @@ The host SHOULD NOT use SLAAC to obtain IPv6 addresses from prefix(es) with the 
 
 <t>
 For each interface, the host MUST keep a list of every PIO it has received that
-has the P flag set and a nonzero Preferred Lifetime. The list is affects the
+has the P flag set and a nonzero Preferred Lifetime. The list affects the
 behaviour of the DHCPv6 client as follows:
 </t>
 <ul>
@@ -191,8 +191,9 @@ servers, then any time a prefix is added to or removed from the list, the client
 consider this to be a change in configuration information as
 described in <xref target="RFC8415" section="18.2.12"/>, and it MUST perform
 a REBIND, unless it is going to stop the client because the list became empty.
-This allows the host to obtain new prefixes if necessary, e.g. when
-the network is being renumbered.  It also refreshes state related to the
+This is in addition to performing a REBIND in the other cases required by that
+section. Issuing a REBIND allows the host to obtain new prefixes if necessary, e.g.,
+when the network is being renumbered. It also refreshes state related to the
 delegated prefix(es).
 </li>
 </ul>
