@@ -171,29 +171,31 @@ The host SHOULD NOT use SLAAC to obtain IPv6 addresses from prefix(es) with the 
 </t>
 
 <t>
-Otherwise, for each interface, the host MUST keep a list of every PIO it has received with the P flag. Each time the client receives a Router Advertisement containing a PIO with the P bit set that is not in the list, and every time a previously-received PIO with the P bit set becomes deprecated:
-
-
+For each interface, the host MUST keep a list of every PIO it has received that
+has the P flag set and a nonzero Preferred Lifetime. The list is affects the
+behaviour of the DHCPv6 client as follows:
 </t>
 <ul>
-<li>
-If the client has not previously received any delegated prefixes from the network, it SHOULD start DHCPv6 Prefix Delegation.
-
+<li>When a prefix's Preferred
+Lifetime decreases to zero, the prefix MUST be removed from the list.
 </li>
+<li>When the length of the list
+increases to one, the host SHOULD start DHCPv6 prefix delegation if it is not
+already running.</li>
+<li>When the length of the list decreases to zero, the host SHOULD
+stop DHCPv6 prefix delegation if it has no other reason to run it.
+The lifetimes of any prefixes already obtained via DHCPv6 are unaffected.</li>
 <li>
 If the client has already received delegated prefix(es) from one or more
-servers, it MUST consider this change in PIOs a change in configuration
-information as described in <xref target="RFC8415" section="18.2.12"/>, i.e. it MUST perform
-a REBIND.  This allows the host to obtain new prefixes if necessary, e.g. when
+servers, then any time a prefix is added to or removed from the list, the client MUST
+consider this to be a change in configuration information as
+described in <xref target="RFC8415" section="18.2.12"/>, and it MUST perform
+a REBIND, unless it is going to stop the client because the list became empty.
+This allows the host to obtain new prefixes if necessary, e.g. when
 the network is being renumbered.  It also refreshes state related to the
 delegated prefix(es).
 </li>
 </ul>
-
-<t>
-Whenever a Prefix Information Option’s Valid lifetime reaches zero, or its P flag changes to 0, the prefix is removed from the list. When there are no such prefixes, the host SHOULD stop the DHCPv6 client if it has no other reason to run it. The lifetimes of any already obtained via DHCPv6 are unaffected.
-</t>
-
 <t>
 When a host requests a prefix via DHCPv6 PD, it MUST use the prefix length hint  <xref target="RFC8415" section="18.2.4"/> to request a prefix that is short enough to form addresses via SLAAC.
 
