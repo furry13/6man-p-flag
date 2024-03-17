@@ -233,8 +233,9 @@ The host MAY use the prefix to provide IPv6 addresses to internal components suc
 <li>
 If the host is capable of acting as a router, and doing so is allowed by local policy, it MAY use the prefix to allow devices directly connected to it to obtain IPv6 addresses, e.g., by routing traffic for that prefix to the interface and sending a Router Advertisement containing the prefix on the interface. If the host does so, and it has has formed addresses from the prefix, then it MUST act as though the addresses were assigned to that interface for the purposes of Neighbour Discovery and Duplicate Address Detection.
 </li>
-
 </ul>
+
+<t>The host MUST NOT forward packets with destination addresses within a delegated prefix to the interface that it obtained the prefix on, as this will cause a routing loop. This problem will not occur if the host has assigned the prefix to a downstream interface. If the host has not assigned the prefix to a downstream interface, then one way to prevent this problem this is to add to its routing table a high-metric discard route for the delegated prefix. Similarly, the host MUST NOT send packets with destination addresses in the delegated prefix to the interface that it obtained the prefix on.</t>
 	
 		   <t>
 		   If the host doesn't obtain any suitable prefixes via DHCPv6 PD it MAY choose, as a fallback mechanism, to form addresses via SLAAC using PIOs with A flag set to 1.
