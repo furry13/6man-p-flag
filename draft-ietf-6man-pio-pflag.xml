@@ -230,7 +230,7 @@ The host MAY form as many IPv6 addresses from the prefix as it chooses.
 The host MAY use the prefix to provide IPv6 addresses to internal components such as virtual machines or containers.
 </li>
 <li>
-If the host is capable of acting as a router, and doing so is allowed by local policy, it MAY use the prefix to allow devices directly connected to it to obtain IPv6 addresses, e.g., by sending a Router Advertisement containing the prefix to a connected interface.
+If the host is capable of acting as a router, and doing so is allowed by local policy, it MAY use the prefix to allow devices directly connected to it to obtain IPv6 addresses, e.g., by routing traffic for that prefix to the interface and sending a Router Advertisement containing the prefix on the interface. If the host does so, and it has has formed addresses from the prefix, then it MUST act as though the addresses were assigned to that interface for the purposes of Neighbour Discovery and Duplicate Address Detection.
 </li>
 
 </ul>
