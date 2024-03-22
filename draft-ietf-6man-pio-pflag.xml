@@ -137,12 +137,12 @@ It's desirable to have a mechanism for the network to communicate the preference
     <section anchor="rationale">
 <name>Rationale</name>
 <t>
-The network administrator might want to indicate to hosts that requesting a prefix via DHCPv6-PD and using that prefix for address assignment (see <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/>) should be preferred over forming SLAAC addresses from the prefix provided in the PIO.
+The network administrator might want to indicate to hosts that requesting a prefix via DHCPv6 PD and using that prefix for address assignment (see <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/>) should be preferred over using individual addresses from the on-link prefix.
 The information is passed to the host via a P flag in the Prefix Information Option (PIO). The reason for it being a PIO flag is as follows:
 </t>
 <ul>
 <li>
-The information should be contained in the Router Advertisement because it must be available to the host before it decides to form IPv6 addresses from the PIO prefix using SLAAC. Otherwise, the host might form IPv6 addresses from the PIO provided and start using them, even if a unique per-host prefix is available via DHCPv6 PD.
+The information must be contained in the Router Advertisement because it must be available to the host before it decides to form IPv6 addresses from the PIO prefix using SLAAC. Otherwise, the host might use SLAAC to form IPv6 addresses from the PIO provided and start using them, even if a unique per-host prefix is available via DHCPv6 PD.
 This is suboptimal because if the host later acquires a prefix using DHCPv6 PD, it can either use both the prefix and SLAAC addresses, reducing the scalability benefits of using DHCPv6 PD, or can remove the SLAAC addresses, which would be disruptive for applications that are using them.
 
 </li>
@@ -166,9 +166,6 @@ Routers SHOULD set the P flag to zero by default, unless explicitly configured b
 <name>Host Behaviour</name>
    <section anchor="track">
    <name>Tracking and requesting prefixes</name>
-<t>
-The host SHOULD NOT use SLAAC to obtain IPv6 addresses from prefix(es) with the P bit set.
-</t>
 
 <t>
 For each interface, the host MUST keep a list of every PIO it has received that
@@ -186,11 +183,11 @@ already running.</li>
 stop DHCPv6 prefix delegation if it has no other reason to run it.
 The lifetimes of any prefixes already obtained via DHCPv6 are unaffected.</li>
 <li>
-If the client has already received delegated prefix(es) from one or more
-servers, then any time a prefix is added to or removed from the list, the client MUST
+If the host has already received delegated prefix(es) from one or more
+servers, then any time a prefix is added to or removed from the list, the host MUST
 consider this to be a change in configuration information as
 described in <xref target="RFC8415" section="18.2.12"/>, and it MUST perform
-a REBIND, unless it is going to stop the client because the list became empty.
+a REBIND, unless it is going to stop the DHCPv6 client because the list became empty.
 This is in addition to performing a REBIND in the other cases required by that
 section. Issuing a REBIND allows the host to obtain new prefixes if necessary, e.g.,
 when the network is being renumbered. It also refreshes state related to the
@@ -198,14 +195,20 @@ delegated prefix(es).
 </li>
 </ul>
 <t>
-When a host requests a prefix via DHCPv6 PD, it MUST use the prefix length hint  <xref target="RFC8415" section="18.2.4"/> to request a prefix that is short enough to form addresses via SLAAC.
+When a host requests a prefix via DHCPv6 PD, it MUST use the prefix length hint <xref target="RFC8415" section="18.2.4"/> to request a prefix that is short enough to form addresses via SLAAC.</t>
 
-	 </t>
+<t>
+In order to achieve the scalability benefits of using DHCPv6 PD, the host SHOULD prefer to form addresses from the delegated prefix instead of using individual addresses in the on-link prefixes. Therefore, when the host requests a prefix using DHCPv6 PD:
+</t>
+<ul>
+<li>It SHOULD NOT use SLAAC to obtain IPv6 addresses from prefix(es) with the P bit set.</li>
+<li>It SHOULD NOT request individual IPv6 addresses from DHPCv6, i.e., it SHOULD NOT include any IA_NA or IA_TA options in Solicit, Renew or Rebind messages.</li>
+</ul>
 	   
-	   
-	   <t>
+<t>If the host does not obtain any suitable prefixes via DHCPv6 PD, it MAY choose to fall back to other address assignment mechanisms, such as forming addresses via SLAAC (if the PIO has the A flag set to 1) and/or requesting addresses via DHCPv6.</t>
+
+<t>
 The P flag is meaningless for link-local prefixes and any Prefix Information Option containing the link-local prefix MUST be ignored as specified in <xref target="RFC4862" section="5.5.3"/>.
-
 </t>
 
    </section>
