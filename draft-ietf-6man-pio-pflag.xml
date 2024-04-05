@@ -164,6 +164,15 @@ Routers SHOULD set the P flag to zero by default, unless explicitly configured b
 </section>
 <section anchor="host">
 <name>Host Behaviour</name>
+
+<section>
+<name>Processing P Flag</name>
+<t>
+This specification only applies to hosts which support DHCPv6 prefix delegation.
+Hosts which do not support DHCPv6 prefix delegation MUST ignore the P flag.
+</t>
+</section>
+
    <section anchor="track">
    <name>Tracking and requesting prefixes</name>
 
@@ -518,7 +527,7 @@ a) If the P flag is set, start the DHCPv6 PD process and use the delegated prefi
     <section anchor="Acknowledgements" numbered="false">
       <name>Acknowledgements</name>
 <t>
-Thanks to Fernando Gont, Suresh Krishnan, Andrew McGregor, Tomek Mrugalski, Timothy Winters for the discussions, the input and all contribution.
+Thanks to Brian Carpenter, Fernando Gont, Suresh Krishnan, Andrew McGregor, Tomek Mrugalski, Timothy Winters for the discussions, the input and all contribution.
 </t>
     </section>
     
