@@ -106,7 +106,8 @@ IPv6-capable devices, especially mobile devices, usually have multiple global IP
 Extending the network to other devices or virtual systems requires that the device provide a way for those systems to obtain IP addresses. These addresses may be part of a prefix that is delegated to the device. Or they may be obtained by the device via other means such as by running SLAAC or DHCPv6 address assignment on the shared on-link prefix, and shared with other devices via ND proxying <xref target="RFC8981"/>.
 </t>
 <t>On large networks, the latter mode creates scalability issues, as the network infrastructure devices need to maintain state per address: IPv6 neighbor cache, SAVI mappings (<xref target="RFC7039"/>), VXLAN routes, etc.
-<xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> provides a a solution that uses DHCPv6 PD <xref target="RFC8415"/> to provide a client with a dedicated prefix, which can be used to form addresses. This solves the scaling issues because the amount of state that has to be maintained by the network does not depend on how many addresses are in use.
+<xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> provides a a solution that uses DHCPv6 PD <xref target="RFC8415"/> to provide a client with a dedicated prefix, which can be used to form addresses.
+This solves the scaling issues because the amount of state that has to be maintained by the network depends on the number of devices and does not depend anymore on how many addresses those devices are using.
 </t>
 
 <t>
