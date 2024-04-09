@@ -399,7 +399,7 @@ a) If the P flag is set, start the DHCPv6 PD process and use the delegated prefi
 <t>
 	The mechanism described in this document relies on the information provided in the Router Advertisement and therefore shares the same security model as SLAAC.
 	If the network doesn't implement RA Guard <xref target="RFC6105"/>, an attacker might send RAs containing the PIO used by the network, set the P flag to 1 and force hosts to ignore the A flag. 
-	In the absense of DHCPv6 PD infrastructure, hosts would experience delays in obtaining IPv6 addresses (as no delegated prefixes are available, hosts MAY choose to fallback to SLAAC).
+	In the absence of DHCPv6 PD infrastructure, hosts would experience delays in obtaining IPv6 addresses (as no delegated prefixes are available, hosts MAY choose to fallback to SLAAC).
 </t>
 	    <t>
 		    The attacker might force hosts to oscillate between DHCPv6 PD and PIO-based SLAAC by sending the same set of PIOs with and then w/o P flag set.
