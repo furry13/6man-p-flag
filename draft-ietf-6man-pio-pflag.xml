@@ -86,7 +86,7 @@
 
     <abstract>
  <t>
-This document defines a "P" flag in the Prefix Information Option of IPv6 Router Advertisements (RAs).
+This document defines a "P" flag in the Prefix Information Option (PIO) of IPv6 Router Advertisements (RAs).
 The flag is used to indicate that the network prefers that clients do not use the prefix provided in the PIO for SLAAC but request a prefix via DHCPv6 PD instead, and use that delegated prefix to form addresses.
 </t>
 
@@ -157,6 +157,49 @@ Also, in a multihoming situation, one upstream network might choose to assign pr
 <t>Note that the prefix(es) that the client obtains via DHCPv6 PD are not related in any way to the prefix(es) in the Router Advertisement which have the P bit set.</t>
 
     </section>
+
+<section anchor="flag-over">
+<name>P Flag Overview</name>
+<t>
+The P flag (also called DHCPv6-PD preferred flag) is a 1-bit PIO flag, located after the R flag (<xref target="RFC6275"/>).
+When set, indicates that this prefix SHOULD NOT be used for stateless address configuration.
+Instead the host SHOULD request a dedicated prefix via DHCPv6-PD and use that prefix for stateless address configuration.
+</t>
+
+<t>
+Adding the P flag reduces the PIO Reserved1 field (<xref target="RFC4861"/>, <xref target="RFC8425"/>) from 5 bits to 4 bits.
+The resulting format of the Prefix Information Option is as follows:
+</t>
+
+<figure align="center" anchor="fig_pio_new">
+<artwork align="center"><![CDATA[
+       0                   1                   2                   3
+       0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+      |     Type      |    Length     | Prefix Length |L|A|R|P| Rsvd1 |
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+      |                         Valid Lifetime                        |
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+      |                       Preferred Lifetime                      |
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+      |                           Reserved2                           |
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+      |                                                               |
+      +                                                               +
+      |                                                               |
+      +                            Prefix                             +
+      |                                                               |
+      +                                                               +
+      |                                                               |
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+]]></artwork>
+                      </figure>
+
+
+
+</section>
+
 <section anchor="Router">
 <name>Router Behaviour</name>
 <t>
@@ -301,95 +344,6 @@ DHCPv6 relays.
 Modifications to RFC-Mandated Behavior 
 </name>
 
-<section>
-<name>
-Changes to RFC4861
-</name>
-<t>
-This document makes the following changes to Section 4.6.2 of <xref target="RFC4861"/>,
-(last updated by <xref target="RFC6275"/>):
-</t>
-<t>
-OLD TEXT:
-</t>
-<t>
-==
-</t>
-<figure align="center" anchor="fig_Option">
-<artwork align="center"><![CDATA[
-       0                   1                   2                   3
-       0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-      |     Type      |    Length     | Prefix Length |L|A|R|Reserved1|
-      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-]]></artwork>
-		      </figure>
-
-<t>
-===
-</t>
-<t>
-NEW TEXT
-</t>
-<t>
-===
-</t>
-<figure align="center" anchor="fig_Option_new">
-<artwork align="center"><![CDATA[
-       0                   1                   2                   3
-       0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-      |     Type      |    Length     | Prefix Length |L|A|R|P| Rsvd1 |
-      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-]]></artwork>
-		      </figure>
-
-
-<t>
-OLD TEXT
-</t>
-<t>
-===
-</t>
-
-<t>
-
-A         1-bit autonomous address-configuration flag.  When set indicates that this prefix can be used for stateless address configuration as specified in [ADDRCONF].
-</t>
-
-<t>
-Reserved1     6-bit unused field.  It MUST be initialized to zero by the sender and MUST be ignored by the receiver.
-</t>
-
-
-<t>
-===
-</t>
-<t>
-NEW TEXT
-</t>
-<t>
-===
-</t>
-<t>
-
-A         1-bit autonomous address-configuration flag.  When set indicates that this prefix can be used for stateless address configuration as specified in [ADDRCONF].
-</t>
-<t>
-
-P             1-bit DHCPv6-PD flag. When set, indicates that this prefix SHOULD NOT be used for stateless address configuration. Instead the host SHOULD request a dedicated prefix via DHCPv6-PD and use that prefix for stateless address configuration.
-</t>
-
-<t>
-Rsvd1         4-bit unused field.  It MUST be initialized to zero by the sender and MUST be ignored by the receiver.
-</t>
-
-<t>
-===
-</t>
-
-
-</section>
 <section>
 <name>
 Changes to RFC4862
