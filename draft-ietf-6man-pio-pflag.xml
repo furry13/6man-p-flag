@@ -155,6 +155,10 @@ Also, in a multihoming situation, one upstream network might choose to assign pr
 </ul>
 
 <t>Note that the prefix(es) that the client obtains via DHCPv6 PD are not related in any way to the prefix(es) in the Router Advertisement which have the P bit set.</t>
+<t>
+Note that setting the 'P' flag in a PIO option expresses the operator's preference as to whether hosts should attempt using DHCPv6 PD instead of performing individual address configuration on the prefix.
+For hosts that honor this preference by requesting prefix delegation, the actual delegated prefix will necessarily be a prefix different from the one from the PIO.
+</t>
 
     </section>
 
@@ -268,11 +272,11 @@ The P flag is meaningless for link-local prefixes and any Prefix Information Opt
 
 <section anchor="received">
 <name>
-Using received prefix(es)
+Using Delegated Prefix(es)
 </name>
 
 	<t>
-		If the received prefix is too long to be used for SLAAC, the host MUST ignore it.
+		If the delegated prefix is too long to be used for SLAAC, the host MUST ignore it.
 	If the prefix is shorter than required for SLAAC, the host SHOULD accept it, allocate one or more longer prefix suitable for SLAAC and use the prefixes as described below.
 	</t>
 <t>
@@ -294,7 +298,7 @@ If the host is capable of acting as a router, and doing so is allowed by local p
 <t>The host MUST NOT forward packets with destination addresses within a delegated prefix to the interface that it obtained the prefix on, as this will cause a routing loop. This problem will not occur if the host has assigned the prefix to a downstream interface. If the host has not assigned the prefix to a downstream interface, then one way to prevent this problem this is to add to its routing table a high-metric discard route for the delegated prefix. Similarly, the host MUST NOT send packets with destination addresses in the delegated prefix to the interface that it obtained the prefix on.</t>
 	
 		   <t>
-		   If the host doesn't obtain any suitable prefixes via DHCPv6 PD it MAY choose, as a fallback mechanism, to form addresses via SLAAC using PIOs with A flag set to 1.
+		   In a presence of PIOs with A flag set to 1, if the host doesn't obtain any suitable prefixes via DHCPv6 PD it MAY choose, as a fallback mechanism, to form addresses via SLAAC using those PIOs.
 	   </t>
 
 </section>
@@ -482,7 +486,7 @@ a) If the P flag is set, start the DHCPv6 PD process and use the delegated prefi
     <section anchor="Acknowledgements" numbered="false">
       <name>Acknowledgements</name>
 <t>
-Thanks to Brian Carpenter, Tim Chown, Fernando Gont, Suresh Krishnan, Andrew McGregor, Tomek Mrugalski, Timothy Winters for the discussions, the input and all contribution.
+Thanks to Nick Buraglio, Brian Carpenter, Tim Chown, Fernando Gont, Suresh Krishnan, Andrew McGregor, Tomek Mrugalski, Ted Lemon, Timothy Winters for the discussions, the input and all contribution.
 </t>
     </section>
     
