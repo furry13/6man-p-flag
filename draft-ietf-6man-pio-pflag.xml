@@ -262,7 +262,7 @@ In order to achieve the scalability benefits of using DHCPv6 PD, the host SHOULD
 <li>It SHOULD NOT request individual IPv6 addresses from DHCPv6, i.e., it SHOULD NOT include any IA_NA or IA_TA options in Solicit, Renew or Rebind messages.</li>
 </ul>
 	   
-<t>If the host does not obtain any suitable prefixes via DHCPv6 PD, it MAY choose to ignore the P flag in the future, allowing the host to fall back to other address assignment mechanisms, such as forming addresses via SLAAC (if the PIO has the A flag set to 1) and/or requesting addresses via DHCPv6.</t>
+<t>If the host does not obtain any suitable prefixes via DHCPv6 PD, it MAY choose to ignore the P flag in the future, allowing the host to fall back to other address assignment mechanisms, such as forming addresses via SLAAC (if the PIO has the A flag set to 1) and/or requesting individual addresses via DHCPv6.</t>
 
 <t>
 The P flag is meaningless for link-local prefixes and any Prefix Information Option containing the link-local prefix MUST be ignored as specified in <xref target="RFC4862" section="5.5.3"/>.
