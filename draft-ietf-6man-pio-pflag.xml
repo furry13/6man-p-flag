@@ -298,7 +298,7 @@ If the host is capable of acting as a router, and doing so is allowed by local p
 <t>The host MUST NOT forward packets with destination addresses within a delegated prefix to the interface that it obtained the prefix on, as this will cause a routing loop. This problem will not occur if the host has assigned the prefix to a downstream interface. If the host has not assigned the prefix to a downstream interface, then one way to prevent this problem this is to add to its routing table a high-metric discard route for the delegated prefix. Similarly, the host MUST NOT send packets with destination addresses in the delegated prefix to the interface that it obtained the prefix on.</t>
 	
 		   <t>
-		   In a presence of PIOs with A flag set to 1, if the host doesn't obtain any suitable prefixes via DHCPv6 PD it MAY choose, as a fallback mechanism, to form addresses via SLAAC using those PIOs.
+		   In the presence of PIOs with A flag set to 1, if the host doesn't obtain any suitable prefixes via DHCPv6 PD it MAY choose, as a fallback mechanism, to form addresses via SLAAC using those PIOs.
 	   </t>
 
 </section>
