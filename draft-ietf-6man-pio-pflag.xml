@@ -213,7 +213,7 @@ Routers SHOULD set the P flag to zero by default, unless explicitly configured b
 <name>Host Behaviour</name>
 
 <section>
-<name>Processing P Flag</name>
+<name>Processing the P Flag</name>
 <t>
 This specification only applies to hosts which support DHCPv6 prefix delegation.
 Hosts which do not support DHCPv6 prefix delegation MUST ignore the P flag.
@@ -232,11 +232,10 @@ The list affects the behaviour of the DHCPv6 client as follows:
 or due to the receipt of a PIO with a Preferred Lifetime of zero, the prefix MUST
 be removed from the list.
 </li>
-<li>When the length of the list
-increases to one, the host SHOULD start DHCPv6 prefix delegation process if it is not
-already running.</li>
-<li>When the length of the list decreases to zero, the host SHOULD
-stop DHCPv6 prefix delegation client if it has no other reason to run it.
+<li>When the length of the list increases to one, the host SHOULD start requesting
+prefixes via DHCPv6 prefix delegation unless it is already doing so.</li>
+<li>When the length of the list decreases to zero, the host SHOULD stop requesting
+or renewing prefixes via DHCPv6 prefix delegation if it has no other reason to do so.
 The lifetimes of any prefixes already obtained via DHCPv6 are unaffected.</li>
 <li>
 If the host has already received delegated prefix(es) from one or more
