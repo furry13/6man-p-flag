@@ -16,7 +16,7 @@
 <rfc
   xmlns:xi="http://www.w3.org/2001/XInclude"
   category="std"
-  docName="draft-ietf-6man-pio-pflag-03"
+  docName="draft-ietf-6man-pio-pflag-04"
   ipr="trust200902"
   obsoletes=""
   updates="4862"
@@ -25,7 +25,7 @@
   version="3">
   <front>
 <title abbrev="pio-p-flag">Signalling DHCPv6 Prefix Delegation Availability to Hosts</title>
-    <seriesInfo name="Internet-Draft" value="draft-ietf-6man-pio-pflag-03"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-6man-pio-pflag-04"/>
 
  <author initials="L." surname="Colitti" fullname="Lorenzo Colitti">
       <organization>Google</organization>
