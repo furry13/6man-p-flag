@@ -217,6 +217,9 @@ Routers SHOULD set the P flag to zero by default, unless explicitly configured b
 <t>
 This specification only applies to hosts which support DHCPv6 prefix delegation.
 Hosts which do not support DHCPv6 prefix delegation MUST ignore the P flag.
+The P flag is meaningless for link-local prefixes and any Prefix Information Option containing
+the link-local prefix MUST be ignored as specified in <xref target="RFC4862" section="5.5.3"/>.
+In the following text, all prefixes are assumed not to be link-local.
 </t>
 
 <t>
@@ -250,17 +253,15 @@ delegated prefix(es).
 <t>
 When a host requests a prefix via DHCPv6 PD, it MUST use the prefix length hint <xref target="RFC8415" section="18.2.4"/> to request a prefix that is short enough to form addresses via SLAAC.</t>
 
-<t>
-In order to achieve the scalability benefits of using DHCPv6 PD, the host SHOULD prefer to form addresses from the delegated prefix instead of using individual addresses in the on-link prefixes. Therefore, when the host requests a prefix using DHCPv6 PD the host SHOULD NOT use SLAAC to obtain IPv6 addresses from PIOs with the P and A bits set.</t>
-
-<t>Unless the host received at least one PIO for glibal prefix with P bit not set, the host SHOULD NOT request individual IPv6 addresses from DHCPv6, i.e., it SHOULD NOT include any IA_NA or IA_TA options in Solicit, Renew or Rebind messages.</t>
+<t>In order to achieve the scalability benefits of using DHCPv6 PD, the host SHOULD prefer
+to form addresses from the delegated prefix instead of using individual addresses in the
+on-link prefix(es). Therefore, when the host requests a prefix using DHCPv6 PD, the host
+SHOULD NOT use SLAAC to obtain IPv6 addresses from PIOs with the P and A bits set.
+Similarly, unless the host processes at least one PIO with the P bit not set, the host
+SHOULD NOT request individual IPv6 addresses from DHCPv6, i.e., it SHOULD NOT include
+any IA_NA or IA_TA options in Solicit, Renew or Rebind messages.</t>
 	   
 <t>If the host does not obtain any suitable prefixes via DHCPv6 PD, it MAY choose to disable further processing of the P flag on that interface, allowing the host to fall back to other address assignment mechanisms, such as forming addresses via SLAAC (if the PIO has the A flag set to 1) and/or requesting individual addresses via DHCPv6.</t>
-
-<t>
-The P flag is meaningless for link-local prefixes and any Prefix Information Option containing the link-local prefix MUST be ignored as specified in <xref target="RFC4862" section="5.5.3"/>.
-</t>
-
    </section>
 
 <section anchor="received">
@@ -408,7 +409,7 @@ a) If the P flag is set, the node SHOULD treat the Autonomous flag as if it was 
     <section anchor="privacy">
       <name>Privacy Considerations</name>
 <t>
-Privacy implications of implementing P flag and using DHCPv6 PD to assign prefixes to hosts is similar to privacy implications of using DHCPv6 for assigning individual addresses. 
+The privacy implications of implementing the P flag and using DHCPv6 PD to assign prefixes to hosts are similar to privacy implications of using DHCPv6 for assigning individual addresses. 
 If the DHCPv6 infrastructure assigns the same prefix to the same client, then an observer might be able to identify clients based on the highest 64 bits of the client's address. Those implications and recommended countermeasures are discussed in Section 13 of <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/>.</t>
       <t>
         Implementing the P flag support on a host / receiving side enables DHCPv6 on that host.
