@@ -221,11 +221,13 @@ Hosts which do not support DHCPv6 prefix delegation MUST ignore the P flag.
 
 <t>
 For each interface, the host MUST keep a list of every PIO it has received that
-has the P flag set. 
+has the P flag set and currently has a non-zero Preferred Lifetime.
 The list affects the behaviour of the DHCPv6 client as follows:
 </t>
 <ul>
-<li>When a prefix's Preferred Lifetime decreases to zero the prefix MUST be removed from the list.
+<li>When a prefix's Preferred Lifetime reaches to zero, either due to expiration
+or due to the receipt of a PIO with a Preferred Lifetime of zero, the prefix MUST
+be removed from the list.
 </li>
 <li>When the length of the list
 increases to one, the host SHOULD start DHCPv6 prefix delegation process if it is not
