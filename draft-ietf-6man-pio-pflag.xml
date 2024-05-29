@@ -154,7 +154,6 @@ Also, in a multihoming situation, one upstream network might choose to assign pr
 </li>
 </ul>
 
-<t>Note that the prefix(es) that the client obtains via DHCPv6 PD are not related in any way to the prefix(es) in the Router Advertisement which have the P bit set.</t>
 <t>
 Note that setting the 'P' flag in a PIO option expresses the operator's preference as to whether hosts should attempt using DHCPv6 PD instead of performing individual address configuration on the prefix.
 For hosts that honor this preference by requesting prefix delegation, the actual delegated prefix will necessarily be a prefix different from the one from the PIO.
@@ -214,30 +213,29 @@ Routers SHOULD set the P flag to zero by default, unless explicitly configured b
 <name>Host Behaviour</name>
 
 <section>
-<name>Processing P Flag</name>
+<name>Processing the P Flag</name>
 <t>
 This specification only applies to hosts which support DHCPv6 prefix delegation.
 Hosts which do not support DHCPv6 prefix delegation MUST ignore the P flag.
+The P flag is meaningless for link-local prefixes and any Prefix Information Option containing
+the link-local prefix MUST be ignored as specified in <xref target="RFC4862" section="5.5.3"/>.
+In the following text, all prefixes are assumed not to be link-local.
 </t>
-</section>
-
-   <section anchor="track">
-   <name>Tracking and requesting prefixes</name>
 
 <t>
-For each interface, the host MUST keep a list of every PIO it has received that
-has the P flag set and a nonzero Preferred Lifetime. The list affects the
-behaviour of the DHCPv6 client as follows:
+For each interface, the host MUST keep a list of every prefix that was received
+from a PIO with the P flag set and currently has a non-zero Preferred Lifetime.
+The list affects the behaviour of the DHCPv6 client as follows:
 </t>
 <ul>
-<li>When a prefix's Preferred
-Lifetime decreases to zero, the prefix MUST be removed from the list.
+<li>When a prefix's Preferred Lifetime becomes zero, either due to expiration
+or due to the receipt of a PIO with a Preferred Lifetime of zero, the prefix MUST
+be removed from the list.
 </li>
-<li>When the length of the list
-increases to one, the host SHOULD start DHCPv6 prefix delegation if it is not
-already running.</li>
-<li>When the length of the list decreases to zero, the host SHOULD
-stop DHCPv6 prefix delegation if it has no other reason to run it.
+<li>When the length of the list increases to one, the host SHOULD start requesting
+prefixes via DHCPv6 prefix delegation unless it is already doing so.</li>
+<li>When the length of the list decreases to zero, the host SHOULD stop requesting
+or renewing prefixes via DHCPv6 prefix delegation if it has no other reason to do so.
 The lifetimes of any prefixes already obtained via DHCPv6 are unaffected.</li>
 <li>
 If the host has already received delegated prefix(es) from one or more
@@ -254,20 +252,15 @@ delegated prefix(es).
 <t>
 When a host requests a prefix via DHCPv6 PD, it MUST use the prefix length hint <xref target="RFC8415" section="18.2.4"/> to request a prefix that is short enough to form addresses via SLAAC.</t>
 
-<t>
-In order to achieve the scalability benefits of using DHCPv6 PD, the host SHOULD prefer to form addresses from the delegated prefix instead of using individual addresses in the on-link prefixes. Therefore, when the host requests a prefix using DHCPv6 PD:
-</t>
-<ul>
-<li>It SHOULD NOT use SLAAC to obtain IPv6 addresses from prefix(es) with the P bit set.</li>
-<li>It SHOULD NOT request individual IPv6 addresses from DHCPv6, i.e., it SHOULD NOT include any IA_NA or IA_TA options in Solicit, Renew or Rebind messages.</li>
-</ul>
-	   
-<t>If the host does not obtain any prefixes via DHCPv6 PD that are suitable for SLAAC, it MAY choose to ignore the P flag in the future, allowing the host to fall back to other address assignment mechanisms, such as forming addresses via SLAAC (if the PIO has the A flag set to 1) and/or requesting individual addresses via DHCPv6.</t>
+<t>In order to achieve the scalability benefits of using DHCPv6 PD, the host SHOULD prefer
+to form addresses from the delegated prefix instead of using individual addresses in the
+on-link prefix(es). Therefore, when the host requests a prefix using DHCPv6 PD, the host
+SHOULD NOT use SLAAC to obtain IPv6 addresses from PIOs with the P and A bits set.
+Similarly, unless the host processes at least one PIO with the P bit not set, the host
+SHOULD NOT request individual IPv6 addresses from DHCPv6, i.e., it SHOULD NOT include
+any IA_NA or IA_TA options in Solicit, Renew or Rebind messages.</t>
 
-<t>
-The P flag is meaningless for link-local prefixes and any Prefix Information Option containing the link-local prefix MUST be ignored as specified in <xref target="RFC4862" section="5.5.3"/>.
-</t>
-
+<t>If the host does not obtain any suitable prefixes via DHCPv6 PD that are suitable for SLAAC, it MAY choose to disable further processing of the P flag on that interface, allowing the host to fall back to other address assignment mechanisms, such as forming addresses via SLAAC (if the PIO has the A flag set to 1) and/or requesting individual addresses via DHCPv6.</t>
    </section>
 
 <section anchor="received">
@@ -297,10 +290,6 @@ If the host is capable of acting as a router, and doing so is allowed by local p
 
 <t>The host MUST NOT forward packets with destination addresses within a delegated prefix to the interface that it obtained the prefix on, as this will cause a routing loop. This problem will not occur if the host has assigned the prefix to a downstream interface. If the host has not assigned the prefix to a downstream interface, then one way to prevent this problem this is to add to its routing table a high-metric discard route for the delegated prefix. Similarly, the host MUST NOT send packets with destination addresses in the delegated prefix to the interface that it obtained the prefix on.</t>
 	
-		   <t>
-		   In the presence of PIOs with A flag set to 1, if the host doesn't obtain any suitable prefixes via DHCPv6 PD it MAY choose, as a fallback mechanism, to disable further processing of the P flag on that interface, and form addresses via SLAAC using those PIOs.
-	   </t>
-
 </section>
 
 <section anchor="p0">
@@ -418,16 +407,16 @@ a) If the P flag is set, the node SHOULD treat the Autonomous flag as if it was 
 
     <section anchor="privacy">
       <name>Privacy Considerations</name>
+<t>
+The privacy implications of implementing the P flag and using DHCPv6 PD to assign prefixes to hosts are similar to privacy implications of using DHCPv6 for assigning individual addresses. 
+If the DHCPv6 infrastructure assigns the same prefix to the same client, then an observer might be able to identify clients based on the highest 64 bits of the client's address. Those implications and recommended countermeasures are discussed in Section 13 of <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/>.</t>
       <t>
-        Implementing the P flag on a host / receiving side enables other
-        systems on the network to trigger running DHCPv6 on that network.
-        Doing so may reveal some minor additional information about the host,
-        most prominently the hostname. This is the same consideration as for
-        the M flag.
+        Implementing the P flag support on a host / receiving side enables DHCPv6 on that host.
+Sending DHCPv6 packets  may reveal some minor additional information about the host,
+        most prominently the hostname. This is not a new concern and would apply for any network which uses DHCPv6 and sets 'M' flag in Router Advertoisements.
       </t>
       <t>
-        No privacy considerations result from supporting the P flag on the
-        sender side.
+        No privacy considerations result from supporting the P flag on the sender side.
       </t>
     </section>
     
