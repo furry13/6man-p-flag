@@ -259,8 +259,8 @@ SHOULD NOT use SLAAC to obtain IPv6 addresses from PIOs with the P and A bits se
 Similarly, unless the host processes at least one PIO with the P bit not set, the host
 SHOULD NOT request individual IPv6 addresses from DHCPv6, i.e., it SHOULD NOT include
 any IA_NA or IA_TA options in Solicit, Renew or Rebind messages.</t>
-	   
-<t>If the host does not obtain any suitable prefixes via DHCPv6 PD, it MAY choose to disable further processing of the P flag on that interface, allowing the host to fall back to other address assignment mechanisms, such as forming addresses via SLAAC (if the PIO has the A flag set to 1) and/or requesting individual addresses via DHCPv6.</t>
+
+<t>If the host does not obtain any suitable prefixes via DHCPv6 PD that are suitable for SLAAC, it MAY choose to disable further processing of the P flag on that interface, allowing the host to fall back to other address assignment mechanisms, such as forming addresses via SLAAC (if the PIO has the A flag set to 1) and/or requesting individual addresses via DHCPv6.</t>
    </section>
 
 <section anchor="received">
