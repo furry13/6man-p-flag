@@ -220,8 +220,8 @@ Hosts which do not support DHCPv6 prefix delegation MUST ignore the P flag.
 </t>
 
 <t>
-For each interface, the host MUST keep a list of every PIO it has received that
-has the P flag set and currently has a non-zero Preferred Lifetime.
+For each interface, the host MUST keep a list of every prefix that was received
+from a PIO with the P flag set and currently has a non-zero Preferred Lifetime.
 The list affects the behaviour of the DHCPv6 client as follows:
 </t>
 <ul>
