@@ -225,7 +225,7 @@ from a PIO with the P flag set and currently has a non-zero Preferred Lifetime.
 The list affects the behaviour of the DHCPv6 client as follows:
 </t>
 <ul>
-<li>When a prefix's Preferred Lifetime reaches to zero, either due to expiration
+<li>When a prefix's Preferred Lifetime becomes zero, either due to expiration
 or due to the receipt of a PIO with a Preferred Lifetime of zero, the prefix MUST
 be removed from the list.
 </li>
