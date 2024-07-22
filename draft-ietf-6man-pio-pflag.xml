@@ -391,7 +391,7 @@ a) If the P flag is set, the node SHOULD treat the Autonomous flag as if it was 
 <t>
 	The mechanism described in this document relies on the information provided in the Router Advertisement and therefore shares the same security model as SLAAC.
 	If the network doesn't implement RA Guard <xref target="RFC6105"/>, an attacker might send RAs containing the PIO used by the network, set the P flag to 1 and force hosts to ignore the A flag. 
-	In the absence of DHCPv6 PD infrastructure, hosts would either obtain no IPv6 addresses or, if they fall back to other IPv6 address assignment mechanisms such as SLAAC and IA_NA, would experience delays in obtaining IPv6 addresses.
+	In the absence of DHCPv6 PD infrastructure, hosts would either obtain no IPv6 addresses or, if they fall back to other IPv6 address assignment mechanisms such as SLAAC and IA_NA, would experience delays in obtaining IPv6 addresses. If the network does not support DHCPv6-Shield <xref target="RFC7610">, the attacker could also run a rogue DHCPv6 server, providing the host with invalid prefixes or other invalid configuration information.
 </t>
 	    <t>
 		    The attacker might force hosts to oscillate between DHCPv6 PD and PIO-based SLAAC by sending the same set of PIOs with and then w/o P flag set.
@@ -465,6 +465,7 @@ Sending DHCPv6 packets  may reveal some minor additional information about the h
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.6877.xml"/>
 	      <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.7084.xml"/>
 	      <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.7039.xml"/>
+        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.7610.xml"/>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.8064.xml"/>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.8981.xml"/>
 
