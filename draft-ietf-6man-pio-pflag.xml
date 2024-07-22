@@ -103,7 +103,7 @@ IPv6-capable devices, especially mobile devices, usually have multiple global IP
 </t>
 
 <t>
-Extending the network to other devices or virtual systems requires that the device provide a way for those systems to obtain IP addresses. These addresses may be part of a prefix that is delegated to the device. Or they may be obtained by the device via other means such as by running SLAAC or DHCPv6 address assignment on the shared on-link prefix, and shared with other devices via ND proxying <xref target="RFC8981"/>.
+Extending the network to other devices or virtual systems requires that the device provide a way for those systems to obtain IP addresses. These addresses may be part of a prefix that is delegated to the device. Or they may be obtained by the device via other means such as by running SLAAC or DHCPv6 address assignment on the shared on-link prefix, and shared with other devices via ND proxying <xref target="RFC4389"/>.
 </t>
 <t>On large networks, the latter mode creates scalability issues, as the network infrastructure devices need to maintain state per address: IPv6 neighbor cache, SAVI mappings (<xref target="RFC7039"/>), VXLAN routes, etc.
 <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> provides a a solution that uses DHCPv6 PD <xref target="RFC8415"/> to provide a client with a dedicated prefix, which can be used to form addresses.
@@ -113,8 +113,7 @@ This solves the scaling issues because the amount of state that has to be mainta
 <t>
 On small networks, scaling to support multiple individual IPv6 addresses is less of a concern, because many home routers support hundreds of neighbor cache entries.
 On the other hand, address space is more limited compared to the number of hosts connected - the smallest home network might only have /60 prefixes, or even just a single /64.
-In such networks delegating an unique prefix per client would not provide any notable scalability benefits and would introduce a risk of address exhaustion.
-
+On such networks, using delegated prefixes would not provide notable scalability benefits, and while these networks might support a limited amount of prefix delegation, they likely cannot support a delegating a prefix to every client without running the risk of address exhaustion.
 </t>
 
 <t>
@@ -165,9 +164,8 @@ For hosts that honor this preference by requesting prefix delegation, the actual
 <name>P Flag Overview</name>
 <t>
 The P flag (also called DHCPv6-PD preferred flag) is a 1-bit PIO flag, located after the R flag (<xref target="RFC6275"/>).
-When set, indicates that this prefix SHOULD NOT be used for stateless address configuration.
-Instead the host SHOULD request a dedicated prefix via DHCPv6-PD and use that prefix for stateless address configuration.
-</t>
+
+The presence of a PIO with the P flag set indicates that that the network prefers that hosts use Prefix Delegation instead of acquiring individual addresses via SLAAC or DHCPv6 address assignment. This implies that the network has a DHCPv6 server capable of making DHCPv6 Prefix Delegations to every device on the network, as described in <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/>.</t>
 
 <t>
 Adding the P flag reduces the PIO Reserved1 field (<xref target="RFC4861"/>, <xref target="RFC8425"/>) from 5 bits to 4 bits.
@@ -296,12 +294,13 @@ If the host is capable of acting as a router, and doing so is allowed by local p
 <name>Absence of PIOs with P bit set</name>
 <t>
 The P bit is purely a positive indicator, telling nodes that DHCPv6
-Prefix Delegation is available and the network prefers the node use it.
+Prefix Delegation is available and the network prefers that nodes use it,
+even if they do not have any other reason to run a Prefix Delegation client.
 The absence of any PIOs with the P bit does not carry any kind of signal to
-the opposite, and MUST NOT be processed to mean that DHCPv6-PD is absent.  In
-particular, nodes that are already running DHCPv6 PD either by explicit
-configuration or by default MUST NOT disable DHCPv6 PD on the absence of PIOs
-with the P bit set.  A very common example of this are CE routers as described
+the opposite, and MUST NOT be processed to mean that DHCPv6-PD is absent. In
+particular, nodes that run DHCPv6 PD due to explicit configuration or by default
+(e.g., to extend the network) MUST NOT disable DHCPv6 PD on the absence of PIOs
+with the P bit set. A very common example of this are CE routers as described
 by <xref target="RFC7084"/>.
 </t>
 </section>
@@ -475,7 +474,7 @@ Sending DHCPv6 packets  may reveal some minor additional information about the h
     <section anchor="Acknowledgements" numbered="false">
       <name>Acknowledgements</name>
 <t>
-Thanks to Nick Buraglio, Brian Carpenter, Tim Chown, Fernando Gont, Suresh Krishnan, Andrew McGregor, Tomek Mrugalski, Ted Lemon, Timothy Winters for the discussions, the input and all contribution.
+Thanks to Nick Buraglio, Brian Carpenter, Tim Chown, David Farmer, Fernando Gont, Suresh Krishnan, Andrew McGregor, Tomek Mrugalski, Ted Lemon, Timothy Winters for the discussions, the input and all contribution.
 </t>
     </section>
     
