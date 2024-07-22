@@ -113,7 +113,7 @@ This solves the scaling issues because the amount of state that has to be mainta
 <t>
 On small networks, scaling to support multiple individual IPv6 addresses is less of a concern, because many home routers support hundreds of neighbor cache entries.
 On the other hand, address space is more limited compared to the number of hosts connected - the smallest home network might only have /60 prefixes, or even just a single /64.
-On such networks, using delegated prefixes would not provide notable scalability benefits, and while these networks might support a limited amount of prefix delegation, they likely cannot support a delegating a prefix to every client without running the risk of address exhaustion.
+On such networks, using delegated prefixes would not provide notable scalability benefits, and while these networks might support a limited amount of prefix delegation, they likely cannot support a delegating a prefix to every client without running the risk of prefix exhaustion.
 </t>
 
 <t>
