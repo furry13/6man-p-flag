@@ -87,7 +87,7 @@
     <abstract>
  <t>
 This document defines a "P" flag in the Prefix Information Option (PIO) of IPv6 Router Advertisements (RAs).
-The flag is used to indicate that the network prefers that clients do not use the prefix provided in the PIO for SLAAC but request a prefix via DHCPv6 PD instead, and use that delegated prefix to form addresses.
+The flag is used to indicate that the network prefers that clients do not use the prefix provided in the PIO for SLAAC but instead request a prefix via DHCPv6 PD, and use that delegated prefix to form addresses.
 </t>
 
     </abstract>
@@ -213,6 +213,10 @@ Routers SHOULD set the P flag to zero by default, unless explicitly configured b
 <section anchor="host">
 <name>Host Behaviour</name>
 
+<t>
+This section uses the term host to refer to any node that processes Router Advertisements. This includes both hosts and nodes such as CE Routers <xref target="RFC7084"/> which forward packets but also listen to Router Advertisements.
+</t>
+
 <section>
 <name>Processing the P Flag</name>
 <t>
@@ -285,7 +289,7 @@ The host MAY form as many IPv6 addresses from the prefix as it chooses.
 The host MAY use the prefix to provide IPv6 addresses to internal components such as virtual machines or containers.
 </li>
 <li>
-If the host is capable of acting as a router, and doing so is allowed by local policy, it MAY use the prefix to allow devices directly connected to it to obtain IPv6 addresses, e.g., by routing traffic for that prefix to the interface and sending a Router Advertisement containing the prefix on the interface. If the host does so, and it has has formed addresses from the prefix, then it MUST act as though the addresses were assigned to that interface for the purposes of Neighbour Discovery and Duplicate Address Detection.
+The host MAY use the prefix to allow devices directly connected to it to obtain IPv6 addresses, e.g., by routing traffic for that prefix to the interface and sending a Router Advertisement containing the prefix on the interface. If the host does so, and it has has formed addresses from the prefix, then it MUST act as though the addresses were assigned to that interface for the purposes of Neighbour Discovery and Duplicate Address Detection.
 </li>
 </ul>
 
