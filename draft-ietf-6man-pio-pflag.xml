@@ -87,7 +87,7 @@
     <abstract>
  <t>
 This document defines a "P" flag in the Prefix Information Option (PIO) of IPv6 Router Advertisements (RAs).
-The flag is used to indicate that the network prefers that clients do not use the prefix provided in the PIO for SLAAC but instead request a prefix via DHCPv6 PD, and use that delegated prefix to form addresses.
+The flag is used to indicate that the network prefers that clients do not use the prefix provided in the PIO for SLAAC but instead request a prefix via DHCPv6 Prefix Delegation (DHCPv6-PD), and use that delegated prefix to form addresses.
 </t>
 
     </abstract>
@@ -106,18 +106,18 @@ IPv6-capable devices, especially mobile devices, usually have multiple global IP
 Extending the network to other devices or virtual systems requires that the device provide a way for those systems to obtain IP addresses. These addresses may be part of a prefix that is delegated to the device. Or they may be obtained by the device via other means such as by running SLAAC or DHCPv6 address assignment on the shared on-link prefix, and shared with other devices via ND proxying <xref target="RFC4389"/>.
 </t>
 <t>On large networks, the latter mode creates scalability issues, as the network infrastructure devices need to maintain state per address: IPv6 neighbor cache, SAVI mappings (<xref target="RFC7039"/>), VXLAN routes, etc.
-<xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> provides a a solution that uses DHCPv6 PD <xref target="RFC8415"/> to provide a client with a dedicated prefix, which can be used to form addresses.
+<xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> provides a solution that uses DHCPv6-PD <xref target="RFC8415"/> to provide a client with a dedicated prefix, which can be used to form addresses.
 This solves the scaling issues because the amount of state that has to be maintained by the network depends on the number of devices and does not depend anymore on how many addresses those devices are using.
 </t>
 
 <t>
 On small networks, scaling to support multiple individual IPv6 addresses is less of a concern, because many home routers support hundreds of neighbor cache entries.
 On the other hand, address space is more limited compared to the number of hosts connected - the smallest home network might only have /60 prefixes, or even just a single /64.
-On such networks, using delegated prefixes would not provide notable scalability benefits, and while these networks might support a limited amount of prefix delegation, they likely cannot support a delegating a prefix to every client without running the risk of prefix exhaustion.
+On such networks, using delegated prefixes would not provide notable scalability benefits, and while these networks might support a limited amount of prefix delegation, they likely cannot support delegating a prefix to every client without running the risk of prefix exhaustion.
 </t>
 
 <t>
-When a host connects to a network which provides a shared prefix in PIO to be used for SLAAC and also supports delegating per-host prefix via DHCPv6 PD,
+When a host connects to a network which provides a shared prefix in PIO to be used for SLAAC and also supports delegating per-host prefix via DHCPv6-PD,
 the host cannot know in advance which address assignment method is most appropriate for the network.
 It's desirable to have a mechanism for the network to communicate the preference to the host.
 </t>
@@ -137,13 +137,13 @@ It's desirable to have a mechanism for the network to communicate the preference
     <section anchor="rationale">
 <name>Rationale</name>
 <t>
-The network administrator might want to indicate to hosts that requesting a prefix via DHCPv6 PD and using that prefix for address assignment (see <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/>) should be preferred over using individual addresses from the on-link prefix.
+The network administrator might want to indicate to hosts that requesting a prefix via DHCPv6-PD and using that prefix for address assignment (see <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/>) should be preferred over using individual addresses from the on-link prefix.
 The information is passed to the host via a P flag in the Prefix Information Option (PIO). The reason for it being a PIO flag is as follows:
 </t>
 <ul>
 <li>
-The information must be contained in the Router Advertisement because it must be available to the host before it decides to form IPv6 addresses from the PIO prefix using SLAAC. Otherwise, the host might use SLAAC to form IPv6 addresses from the PIO provided and start using them, even if a unique per-host prefix is available via DHCPv6 PD.
-Forming addresses via SLAAC is suboptimal because if the host later acquires a prefix using DHCPv6 PD, it can either use both the prefix and SLAAC addresses, reducing the scalability benefits of using DHCPv6 PD, or can remove the SLAAC addresses, which would be disruptive for applications that are using them.
+The information must be contained in the Router Advertisement because it must be available to the host before it decides to form IPv6 addresses from the PIO prefix using SLAAC. Otherwise, the host might use SLAAC to form IPv6 addresses from the PIO provided and start using them, even if a unique per-host prefix is available via DHCPv6-PD.
+Forming addresses via SLAAC is suboptimal because if the host later acquires a prefix using DHCPv6-PD, it can either use both the prefix and SLAAC addresses, reducing the scalability benefits of using DHCPv6-PD, or can remove the SLAAC addresses, which would be disruptive for applications that are using them.
 
 </li>
 <li>
@@ -154,7 +154,7 @@ Also, in a multihoming situation, one upstream network might choose to assign pr
 </ul>
 
 <t>
-Note that setting the 'P' flag in a PIO option expresses the operator's preference as to whether hosts should attempt using DHCPv6 PD instead of performing individual address configuration on the prefix.
+Note that setting the 'P' flag in a PIO option expresses the operator's preference as to whether hosts should attempt using DHCPv6-PD instead of performing individual address configuration on the prefix.
 For hosts that honor this preference by requesting prefix delegation, the actual delegated prefix will necessarily be a prefix different from the one from the PIO.
 </t>
 
@@ -255,17 +255,17 @@ delegated prefix(es).
 </li>
 </ul>
 <t>
-When a host requests a prefix via DHCPv6 PD, it MUST use the prefix length hint <xref target="RFC8415" section="18.2.4"/> to request a prefix that is short enough to form addresses via SLAAC.</t>
+When a host requests a prefix via DHCPv6-PD, it MUST use the prefix length hint <xref target="RFC8415" section="18.2.4"/> to request a prefix that is short enough to form addresses via SLAAC.</t>
 
-<t>In order to achieve the scalability benefits of using DHCPv6 PD, the host SHOULD prefer
+<t>In order to achieve the scalability benefits of using DHCPv6-PD, the host SHOULD prefer
 to form addresses from the delegated prefix instead of using individual addresses in the
-on-link prefix(es). Therefore, when the host requests a prefix using DHCPv6 PD, the host
+on-link prefix(es). Therefore, when the host requests a prefix using DHCPv6-PD, the host
 SHOULD NOT use SLAAC to obtain IPv6 addresses from PIOs with the P and A bits set.
 Similarly, unless the host processes at least one PIO with the P bit not set, the host
 SHOULD NOT request individual IPv6 addresses from DHCPv6, i.e., it SHOULD NOT include
 any IA_NA or IA_TA options in Solicit, Renew or Rebind messages.</t>
 
-<t>If the host does not obtain any suitable prefixes via DHCPv6 PD that are suitable for SLAAC, it MAY choose to disable further processing of the P flag on that interface, allowing the host to fall back to other address assignment mechanisms, such as forming addresses via SLAAC (if the PIO has the A flag set to 1) and/or requesting individual addresses via DHCPv6.</t>
+<t>If the host does not obtain any suitable prefixes via DHCPv6-PD that are suitable for SLAAC, it MAY choose to disable further processing of the P flag on that interface, allowing the host to fall back to other address assignment mechanisms, such as forming addresses via SLAAC (if the PIO has the A flag set to 1) and/or requesting individual addresses via DHCPv6.</t>
    </section>
 
 <section anchor="received">
@@ -305,8 +305,8 @@ Prefix Delegation is available and the network prefers that nodes use it,
 even if they do not have any other reason to run a Prefix Delegation client.
 The absence of any PIOs with the P bit does not carry any kind of signal to
 the opposite, and MUST NOT be processed to mean that DHCPv6-PD is absent. In
-particular, nodes that run DHCPv6 PD due to explicit configuration or by default
-(e.g., to extend the network) MUST NOT disable DHCPv6 PD on the absence of PIOs
+particular, nodes that run DHCPv6-PD due to explicit configuration or by default
+(e.g., to extend the network) MUST NOT disable DHCPv6-PD on the absence of PIOs
 with the P bit set. A very common example of this are CE routers as described
 by <xref target="RFC7084"/>.
 </t>
@@ -398,12 +398,12 @@ a) If the P flag is set, the node SHOULD treat the Autonomous flag as if it was 
 <t>
 	The mechanism described in this document relies on the information provided in the Router Advertisement and therefore shares the same security model as SLAAC.
 	If the network doesn't implement RA Guard <xref target="RFC6105"/>, an attacker might send RAs containing the PIO used by the network, set the P flag to 1 and force hosts to ignore the A flag. 
-	In the absence of DHCPv6 PD infrastructure, hosts would either obtain no IPv6 addresses or, if they fall back to other IPv6 address assignment mechanisms such as SLAAC and IA_NA, would experience delays in obtaining IPv6 addresses. If the network does not support DHCPv6-Shield <xref target="RFC7610"/>, the attacker could also run a rogue DHCPv6 server, providing the host with invalid prefixes or other invalid configuration information.
+	In the absence of DHCPv6-PD infrastructure, hosts would either obtain no IPv6 addresses or, if they fall back to other IPv6 address assignment mechanisms such as SLAAC and IA_NA, would experience delays in obtaining IPv6 addresses. If the network does not support DHCPv6-Shield <xref target="RFC7610"/>, the attacker could also run a rogue DHCPv6 server, providing the host with invalid prefixes or other invalid configuration information.
 </t>
 	    <t>
-		    The attacker might force hosts to oscillate between DHCPv6 PD and PIO-based SLAAC by sending the same set of PIOs with and then w/o P flag set.
+		    The attacker might force hosts to oscillate between DHCPv6-PD and PIO-based SLAAC by sending the same set of PIOs with and then w/o P flag set.
 		    That would cause the clients to issue REBIND requests, increasing the load on the DHCP infrastructure. 
-		    However Section 14.1 of <xref target="RFC8415"/> requires that DHCPv6 PD clients rate limit transmitted DHCPv6 messages.
+		    However Section 14.1 of <xref target="RFC8415"/> requires that DHCPv6-PD clients rate limit transmitted DHCPv6 messages.
 </t>
 		    
 	    <t>
@@ -414,7 +414,7 @@ a) If the P flag is set, the node SHOULD treat the Autonomous flag as if it was 
     <section anchor="privacy">
       <name>Privacy Considerations</name>
 <t>
-The privacy implications of implementing the P flag and using DHCPv6 PD to assign prefixes to hosts are similar to privacy implications of using DHCPv6 for assigning individual addresses. 
+The privacy implications of implementing the P flag and using DHCPv6-PD to assign prefixes to hosts are similar to privacy implications of using DHCPv6 for assigning individual addresses. 
 If the DHCPv6 infrastructure assigns the same prefix to the same client, then an observer might be able to identify clients based on the highest 64 bits of the client's address. Those implications and recommended countermeasures are discussed in Section 13 of <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/>.</t>
       <t>
         Implementing the P flag support on a host / receiving side enables DHCPv6 on that host.
