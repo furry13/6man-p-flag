@@ -99,28 +99,16 @@ The flag is used to indicate that the network prefers that clients use the <xref
     <section>
       <name>Introduction</name>
 <t>
-IPv6-capable devices, especially mobile devices, usually have multiple global IPv6 addresses, such as stable addresses (<xref target="RFC8064"/>), temporary addresses (<xref target="RFC8981"/>), 464XLAT addresses (<xref target="RFC6877"/>), and dedicated addresses for virtual systems such as VMs or containers. Additionally, these devices often extend the network, either externally to other devices (e.g., when tethering) or internally, to virtual systems.
+<xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> documents an IPv6 address assignment model where IPv6 devices obtain dedicated prefixes from the network via DHCPv6 Prefix Delegation <xref target="RFC8415"/>. This model provides devices with large amounts of address space that they can use to individually number VMs or containers or extend the network to downstream devices. It also provides scalability benefits on large networks because network infrastructure devices do not need to maintain state per address: IPv6 neighbor cache, SAVI mappings (<xref target="RFC7039"/>), VXLAN routes, etc.
+
+On smaller networks, scaling to support multiple individual IPv6 addresses is less of a concern, because many home routers support hundreds of neighbor cache entries. Also, many smaller networks currently offer prefix delegation but assume that a limited number of specialized devices and/or applications will require delegated prefixes, and thus do not allocate enough address space to offer prefixes to every device that connects to the network. For example, if hosts enable <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> on a home network that only provides a /60, and each host obtains a /64 prefix, then the network will run out of prefixes after 15 devices connect.
+
+Therefore, to safely roll out <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> implementations on the client side, it is necessary to have a mechanism for the network to signal to the host which address assignment method is preferred.
 </t>
 
 <t>
-Extending the network to other devices or virtual systems requires that the device provide a way for those systems to obtain IP addresses. These addresses may be part of a prefix that is delegated to the device. Or they may be obtained by the device via other means such as by running SLAAC or DHCPv6 address assignment on the shared on-link prefix, and shared with other devices via ND proxying <xref target="RFC4389"/>.
-</t>
-<t>On large networks, the latter mode creates scalability issues, as the network infrastructure devices need to maintain state per address: IPv6 neighbor cache, SAVI mappings (<xref target="RFC7039"/>), VXLAN routes, etc.
-<xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> provides a solution that uses DHCPv6-PD <xref target="RFC8415"/> to provide a client with a dedicated prefix, which can be used to form addresses.
-This solves the scaling issues because the amount of state that has to be maintained by the network depends on the number of devices and does not depend anymore on how many addresses those devices are using.
 </t>
 
-<t>
-On small networks, scaling to support multiple individual IPv6 addresses is less of a concern, because many home routers support hundreds of neighbor cache entries.
-On the other hand, address space is more limited compared to the number of hosts connected - the smallest home network might only have /60 prefixes, or even just a single /64.
-On such networks, using delegated prefixes would not provide notable scalability benefits, and while these networks might support a limited amount of prefix delegation, they likely cannot support delegating a prefix to every client without running the risk of prefix exhaustion.
-</t>
-
-<t>
-When a host connects to a network which provides a shared prefix in PIO to be used for SLAAC and also supports delegating per-host prefix via DHCPv6-PD,
-the host cannot know in advance which address assignment method is most appropriate for the network.
-For example, if hosts enable <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> on a home network that only provides a /60, and each host obtains a /64 prefix, then the network will run out of prefixes after 15 devices connect. Therefore, to safely roll out <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> implementations on the client side, it is necessary to have a mechanism for the network to signal to the host which address assignment method is preferred.
-</t>
     </section>
       
       <section>
@@ -482,7 +470,7 @@ Sending DHCPv6 packets  may reveal some minor additional information about the h
     <section anchor="Acknowledgements" numbered="false">
       <name>Acknowledgements</name>
 <t>
-Thanks to Nick Buraglio, Brian Carpenter, Tim Chown, David Farmer, Fernando Gont, Suresh Krishnan, Ted Lemon, Andrew McGregor, Tomek Mrugalski, Michael Richardson, Timothy Winters for the discussions, the input and all contribution.
+Thanks to Nick Buraglio, Brian Carpenter, Tim Chown, David Farmer, Fernando Gont, Suresh Krishnan, Ted Lemon, Andrew McGregor, Tomek Mrugalski, Michael Richardson, Timothy Winters for the discussions, the input and all contributions.
 </t>
     </section>
     
