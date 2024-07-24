@@ -119,7 +119,7 @@ On such networks, using delegated prefixes would not provide notable scalability
 <t>
 When a host connects to a network which provides a shared prefix in PIO to be used for SLAAC and also supports delegating per-host prefix via DHCPv6-PD,
 the host cannot know in advance which address assignment method is most appropriate for the network.
-It's desirable to have a mechanism for the network to communicate the preference to the host.
+For example, if hosts enable <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> on a home network that only provides a /60, and each host obtains a /64 prefix, then the network will run out of prefixes after 15 devices connect. Therefore, to safely roll out <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> implementations on the client side, it is necessary to have a mechanism for the network to signal to the host which address assignment method is preferred.
 </t>
     </section>
       
