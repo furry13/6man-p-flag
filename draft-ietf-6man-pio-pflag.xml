@@ -208,7 +208,7 @@ This section uses the term host to refer to any node that processes Router Adver
 <section>
 <name>Processing the P Flag</name>
 <t>
-This specification only applies to hosts which support DHCPv6 prefix delegation.
+This specification only applies to hosts which support acting as DHCPv6 Prefix Delegation clients.
 Hosts which do not support DHCPv6 prefix delegation MUST ignore the P flag.
 The P flag is meaningless for link-local prefixes and any Prefix Information Option containing
 the link-local prefix MUST be ignored as specified in <xref target="RFC4862" section="5.5.3"/>.
