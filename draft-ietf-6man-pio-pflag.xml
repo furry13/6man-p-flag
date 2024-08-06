@@ -16,7 +16,7 @@
 <rfc
   xmlns:xi="http://www.w3.org/2001/XInclude"
   category="std"
-  docName="draft-ietf-6man-pio-pflag-07"
+  docName="draft-ietf-6man-pio-pflag-08"
   ipr="trust200902"
   obsoletes=""
   updates="4862"
@@ -25,7 +25,7 @@
   version="3">
   <front>
 <title abbrev="pio-p-flag">Signalling DHCPv6 Prefix per Client Availability to Hosts</title>
-    <seriesInfo name="Internet-Draft" value="draft-ietf-6man-pio-pflag-07"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-6man-pio-pflag-08"/>
 
  <author initials="L." surname="Colitti" fullname="Lorenzo Colitti">
       <organization>Google</organization>
@@ -99,10 +99,12 @@ The flag is used to indicate that the network prefers that clients use the <xref
     <section>
       <name>Introduction</name>
 <t>
-<xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> documents an IPv6 address assignment model where IPv6 devices obtain dedicated prefixes from the network via DHCPv6 Prefix Delegation <xref target="RFC8415"/>. This model provides devices with large amounts of address space that they can use to individually number VMs or containers or extend the network to downstream devices. It also provides scalability benefits on large networks because network infrastructure devices do not need to maintain state per address: IPv6 neighbor cache, SAVI mappings (<xref target="RFC7039"/>), VXLAN routes, etc.
-
+<xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> documents an IPv6 address assignment model where IPv6 devices obtain dedicated prefixes from the network via DHCPv6 Prefix Delegation <xref target="RFC8415"/>.
+</t>
+<t>This model provides devices with large amounts of address space that they can use to individually number VMs or containers or extend the network to downstream devices. It also provides scalability benefits on large networks because network infrastructure devices do not need to maintain state per address: IPv6 neighbor cache, SAVI mappings (<xref target="RFC7039"/>), VXLAN routes, etc.
 On smaller networks, scaling to support multiple individual IPv6 addresses is less of a concern, because many home routers support hundreds of neighbor cache entries. Also, many smaller networks currently offer prefix delegation but assume that a limited number of specialized devices and/or applications will require delegated prefixes, and thus do not allocate enough address space to offer prefixes to every device that connects to the network. For example, if hosts enable <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> on a home network that only provides a /60, and each host obtains a /64 prefix, then the network will run out of prefixes after 15 devices connect.
-
+</t>
+<t>
 Therefore, to safely roll out <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> implementations on the client side, it is necessary to have a mechanism for the network to signal to the host which address assignment method is preferred.
 </t>
 
@@ -300,6 +302,13 @@ by <xref target="RFC7084"/>.
 </t>
 </section>
 
+<section anchor="onlink">
+<name>On-link Communication</name>
+<t>
+When the network delegates unique prefixes to clients, each client will consider other client's destination addresses to be off-link, because those addresses are from the delegated prefixes and are not within any on-link prefix. When a client sends traffic to another client, packets will initially be sent to the default router. The router may respond with an ICMPv6 redirect message (Section 4.5 of [RFC4861]). If the client receives and accepts the redirect, then traffic can flow directly from device to device. Therefore, hosts supporting the P flag SHOULD process redirects unless configured otherwise.
+</t>
+</section>
+
 <section anchor="addrselect">
 <name>Source Address Selection</name>
 <t>
@@ -397,6 +406,9 @@ a) If the P flag is set, the node SHOULD treat the Autonomous flag as if it was 
 	    <t>
 		    It should be noted that if the network allows rogue RAs to be sent, the attacker would be able to disrupt hosts connectivity anyway, so this document doesn't introduce any fundamentally new security considerations.
 	    </t>
+        <t>
+            Security considerations inherent to the PD-per-device model are documented in Section 15 of <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/>.
+        </t>
     </section>
 
     <section anchor="privacy">
@@ -407,7 +419,7 @@ If the DHCPv6 infrastructure assigns the same prefix to the same client, then an
       <t>
         Implementing the P flag support on a host / receiving side enables DHCPv6 on that host.
 Sending DHCPv6 packets  may reveal some minor additional information about the host,
-        most prominently the hostname. This is not a new concern and would apply for any network which uses DHCPv6 and sets 'M' flag in Router Advertoisements.
+        most prominently the hostname. This is not a new concern and would apply for any network which uses DHCPv6 and sets 'M' flag in Router Advertisements.
       </t>
       <t>
         No privacy considerations result from supporting the P flag on the sender side.
@@ -453,24 +465,19 @@ Sending DHCPv6 packets  may reveal some minor additional information about the h
  
       <references>
 	      <name>Informative References</name>
-	      <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.4389.xml"/>
 	      <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.6105.xml"/>
         <xi:include href="https://bib.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-v6ops-dhcp-pd-per-device.xml"/>
-        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.6275.xml"/>
-        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.6877.xml"/>
+	      <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.6275.xml"/>
 	      <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.7084.xml"/>
 	      <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.7039.xml"/>
-        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.7610.xml"/>
-        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.8064.xml"/>
-        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.8981.xml"/>
-
+	      <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.7610.xml"/>
       </references>
     </references>
     
     <section anchor="Acknowledgements" numbered="false">
       <name>Acknowledgements</name>
 <t>
-Thanks to Nick Buraglio, Brian Carpenter, Tim Chown, David Farmer, Fernando Gont, Suresh Krishnan, Ted Lemon, Andrew McGregor, Tomek Mrugalski, Michael Richardson, Timothy Winters for the discussions, the input and all contributions.
+Thanks to Nick Buraglio, Brian Carpenter, Tim Chown, David Farmer, Fernando Gont, Suresh Krishnan, Ted Lemon, Andrew McGregor, Tomek Mrugalski, Michael Richardson, Ole Trøan, Timothy Winters for the discussions, the input and all contributions.
 </t>
     </section>
     
