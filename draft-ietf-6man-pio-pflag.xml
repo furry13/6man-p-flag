@@ -16,7 +16,7 @@
 <rfc
   xmlns:xi="http://www.w3.org/2001/XInclude"
   category="std"
-  docName="draft-ietf-6man-pio-pflag-08"
+  docName="draft-ietf-6man-pio-pflag-09"
   ipr="trust200902"
   obsoletes=""
   updates="4862"
@@ -25,7 +25,7 @@
   version="3">
   <front>
 <title abbrev="pio-p-flag">Signalling DHCPv6 Prefix per Client Availability to Hosts</title>
-    <seriesInfo name="Internet-Draft" value="draft-ietf-6man-pio-pflag-08"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-6man-pio-pflag-09"/>
 
  <author initials="L." surname="Colitti" fullname="Lorenzo Colitti">
       <organization>Google</organization>
@@ -87,7 +87,7 @@
     <abstract>
  <t>
 This document defines a "P" flag in the Prefix Information Option (PIO) of IPv6 Router Advertisements (RAs).
-The flag is used to indicate that the network prefers that clients use the <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> deployment model instead of using individual adresses in the on-link prefix assigned using SLAAC or DHCPv6 IA_NA.
+The flag is used to indicate that the network prefers that clients use the draft-ietf-v6ops-dhcp-pd-per-device deployment model instead of using individual adresses in the on-link prefix assigned using SLAAC or DHCPv6 IA_NA.
 </t>
 
     </abstract>
@@ -251,9 +251,9 @@ When a host requests a prefix via DHCPv6-PD, it MUST use the prefix length hint 
 to form addresses from the delegated prefix instead of using individual addresses in the
 on-link prefix(es). Therefore, when the host requests a prefix using DHCPv6-PD, the host
 SHOULD NOT use SLAAC to obtain IPv6 addresses from PIOs with the P and A bits set.
-Similarly, unless the host processes at least one PIO with the P bit not set, the host
-SHOULD NOT request individual IPv6 addresses from DHCPv6, i.e., it SHOULD NOT include
-any IA_NA or IA_TA options in Solicit, Renew or Rebind messages.</t>
+Similarly, if all PIOs processed by the host have the P bit set, the host SHOULD NOT request individual IPv6 addresses from DHCPv6, i.e., it SHOULD NOT include any IA_NA options in SOLICIT messages.
+The host MAY continue to use addresses that are already configured.
+</t>
 
 <t>If the host does not obtain any suitable prefixes via DHCPv6-PD that are suitable for SLAAC, it MAY choose to disable further processing of the P flag on that interface, allowing the host to fall back to other address assignment mechanisms, such as forming addresses via SLAAC (if the PIO has the A flag set to 1) and/or requesting individual addresses via DHCPv6.</t>
    </section>
