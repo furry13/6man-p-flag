@@ -90,7 +90,7 @@ This document defines a "P" flag in the Prefix Information Option (PIO) of IPv6 
 The flag is used to indicate that the network prefers that clients use the draft-ietf-v6ops-dhcp-pd-per-device deployment model instead of using individual adresses in the on-link prefix assigned using SLAAC or DHCPv6 IA_NA.
 </t>
 <t>
-This document updated RFC4862 to indicate that the Autonomous flag in a PIO needs to be ignored if the PIO has the P flag set.
+This document updates RFC4862 to indicate that the Autonomous flag in a PIO needs to be ignored if the PIO has the P flag set.
 </t>
 
     </abstract>
