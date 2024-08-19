@@ -24,7 +24,7 @@
   xml:lang="en"
   version="3">
   <front>
-<title abbrev="pio-p-flag">Signalling DHCPv6 Prefix per Client Availability to Hosts</title>
+<title abbrev="pio-p-flag">Signaling DHCPv6 Prefix per Client Availability to Hosts</title>
     <seriesInfo name="Internet-Draft" value="draft-ietf-6man-pio-pflag-09"/>
 
  <author initials="L." surname="Colitti" fullname="Lorenzo Colitti">
@@ -88,6 +88,9 @@
  <t>
 This document defines a "P" flag in the Prefix Information Option (PIO) of IPv6 Router Advertisements (RAs).
 The flag is used to indicate that the network prefers that clients use the draft-ietf-v6ops-dhcp-pd-per-device deployment model instead of using individual adresses in the on-link prefix assigned using SLAAC or DHCPv6 IA_NA.
+</t>
+<t>
+This document updated RFC4862 to indicate that the Autonomous flag in a PIO needs to be ignored if the PIO has the P flag set.
 </t>
 
     </abstract>
