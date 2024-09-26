@@ -103,8 +103,7 @@ This document updates RFC4862 to indicate that the Autonomous flag in a PIO need
       <name>Introduction</name>
 <t>
 <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> documents an IPv6 address assignment model where IPv6 devices obtain dedicated prefixes from the network via DHCPv6 Prefix Delegation <xref target="RFC8415"/>.
-</t>
-<t>This model provides devices with large amounts of address space that they can use to individually number VMs or containers or extend the network to downstream devices. It also provides scalability benefits on large networks because network infrastructure devices do not need to maintain state per address: IPv6 neighbor cache, SAVI mappings (<xref target="RFC7039"/>), VXLAN routes, etc.
+This model provides devices with large amounts of address space that they can use to individually number VMs or containers or extend the network to downstream devices. It also provides scalability benefits on large networks because network infrastructure devices do not need to maintain per-address state, such as IPv6 neighbor cache, SAVI mappings (<xref target="RFC7039"/>), VXLAN routes, etc.
 On smaller networks, scaling to support multiple individual IPv6 addresses is less of a concern, because many home routers support hundreds of neighbor cache entries. Also, many smaller networks currently offer prefix delegation but assume that a limited number of specialized devices and/or applications will require delegated prefixes, and thus do not allocate enough address space to offer prefixes to every device that connects to the network. For example, if hosts enable <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> on a home network that only provides a /60, and each host obtains a /64 prefix, then the network will run out of prefixes after 15 devices connect.
 </t>
 <t>
@@ -125,6 +124,49 @@ Therefore, to safely roll out <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/>
           <xref target="RFC8174"/> when, and only when, they appear in
           all capitals, as shown here.</t>
       </section>
+
+<section>
+<name>Terminology</name>
+<t>
+Client: a node which connects to a network and acquires addresses. The node may wish to obtain addresses for its own use, or may be a router that wishes to extend the network to its physical or virtual subsystems, or both. It may be either a host or a router as defined by <xref target="RFC8200"/>.
+        </t>
+<t>
+DHCPv6-PD:  DHCPv6 (<xref target="RFC8415"/>) mechanism to delegate IPv6 prefixes to clients.
+</t>
+<t>
+DHCPv6 IA_NA: Identity Association for Non-temporary Addresses (Section 21.4 of <xref target="RFC8415"/>).
+</t>
+<t>
+DHCPv6 IA_PD: Identity Association for Prefix Delegation (Section 21.21 of <xref target="RFC8415"/>).
+</t>
+              <t>
+                              Host: any node that is not a router, <xref target="RFC8200"/>.
+              </t>
+              <t>
+                      ND: Neighbor Discovery, <xref target="RFC4861"/>.
+              </t>
+<t>
+                              Node: a device that implements IPv6, <xref target="RFC8200"/>.
+              </t>
+      
+<t>
+NUD: Neighbor Unreachability Detection,  <xref target="RFC4861"/>.
+</t>
+<t>
+On-link prefix or address: a prefix or address that is assigned to an interface on a specified link. See <xref target="RFC4861"/> for a definition of an on-link node.
+</t>
+<t>
+Off-link: the opposite of "on-link" (see <xref target="RFC4861"/>).
+</t>
+<t>
+PIO: Prefix Information Option, <xref target="RFC4862"/>.
+</t>
+              <t>
+                      SLAAC: IPv6 Stateless Address Autoconfiguration, <xref target="RFC4862"/>.
+              </t>
+
+
+</section>
 
 
     <section anchor="rationale">
@@ -239,10 +281,10 @@ The lifetimes of any prefixes already obtained via DHCPv6 are unaffected.</li>
 If the host has already received delegated prefix(es) from one or more
 servers, then any time a prefix is added to or removed from the list, the host MUST
 consider this to be a change in configuration information as
-described in <xref target="RFC8415" section="18.2.12"/>, and it MUST perform
-a REBIND, unless it is going to stop the DHCPv6 client because the list became empty.
+described in <xref target="RFC8415" section="18.2.12"/>. In that case the host MUST perform
+a REBIND or, if the list became empty, stop the DHCPv6 client.
 This is in addition to performing a REBIND in the other cases required by that
-section. Issuing a REBIND allows the host to obtain new prefixes if necessary, e.g.,
+section. Issuing a REBIND allows the host to obtain new prefixes if necessary, for example
 when the network is being renumbered. It also refreshes state related to the
 delegated prefix(es).
 </li>
@@ -254,7 +296,7 @@ When a host requests a prefix via DHCPv6-PD, it MUST use the prefix length hint 
 to form addresses from the delegated prefix instead of using individual addresses in the
 on-link prefix(es). Therefore, when the host requests a prefix using DHCPv6-PD, the host
 SHOULD NOT use SLAAC to obtain IPv6 addresses from PIOs with the P and A bits set.
-Similarly, if all PIOs processed by the host have the P bit set, the host SHOULD NOT request individual IPv6 addresses from DHCPv6, i.e., it SHOULD NOT include any IA_NA options in SOLICIT messages.
+Similarly, if all PIOs processed by the host have the P bit set, the host SHOULD NOT request individual IPv6 addresses from DHCPv6, i.e., it SHOULD NOT include any IA_NA options in SOLICIT (<xref target="RFC8415"/>) messages.
 The host MAY continue to use addresses that are already configured.
 </t>
 
@@ -282,7 +324,7 @@ The host MAY form as many IPv6 addresses from the prefix as it chooses.
 The host MAY use the prefix to provide IPv6 addresses to internal components such as virtual machines or containers.
 </li>
 <li>
-The host MAY use the prefix to allow devices directly connected to it to obtain IPv6 addresses, e.g., by routing traffic for that prefix to the interface and sending a Router Advertisement containing the prefix on the interface. If the host does so, and it has has formed addresses from the prefix, then it MUST act as though the addresses were assigned to that interface for the purposes of Neighbour Discovery and Duplicate Address Detection.
+The host MAY use the prefix to allow devices directly connected to it to obtain IPv6 addresses. For example, the host MAY route traffic for that prefix to the interface and send a Router Advertisement containing the prefix on the interface. If the host does so, and it has has formed addresses from the prefix, then it MUST act as though the addresses were assigned to that interface for the purposes of Neighbour Discovery and Duplicate Address Detection.
 </li>
 </ul>
 
@@ -474,6 +516,7 @@ Sending DHCPv6 packets  may reveal some minor additional information about the h
 	      <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.7084.xml"/>
 	      <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.7039.xml"/>
 	      <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.7610.xml"/>
+              <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.8200.xml"/>
       </references>
     </references>
     
