@@ -87,7 +87,7 @@
     <abstract>
  <t>
 This document defines a "P" flag in the Prefix Information Option (PIO) of IPv6 Router Advertisements (RAs).
-The flag is used to indicate that the network prefers that clients use the draft-ietf-v6ops-dhcp-pd-per-device deployment model instead of using individual adresses in the on-link prefix assigned using SLAAC or DHCPv6 IA_NA.
+The flag is used to indicate that the network prefers that clients use the draft-ietf-v6ops-dhcp-pd-per-device deployment model instead of using individual adresses in the on-link prefix assigned using Stateless Address Autoconfiguration (SLAAC) or DHCPv6 Identity Association for Non-temporary Addresses (IA_NA).
 </t>
 <t>
 This document updates RFC4862 to indicate that the Autonomous flag in a PIO needs to be ignored if the PIO has the P flag set.
@@ -102,9 +102,9 @@ This document updates RFC4862 to indicate that the Autonomous flag in a PIO need
     <section>
       <name>Introduction</name>
 <t>
-<xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> documents an IPv6 address assignment model where IPv6 devices obtain dedicated prefixes from the network via DHCPv6 Prefix Delegation <xref target="RFC8415"/>.
-This model provides devices with large amounts of address space that they can use to individually number VMs or containers or extend the network to downstream devices. It also provides scalability benefits on large networks because network infrastructure devices do not need to maintain per-address state, such as IPv6 neighbor cache, SAVI mappings (<xref target="RFC7039"/>), VXLAN routes, etc.
-On smaller networks, scaling to support multiple individual IPv6 addresses is less of a concern, because many home routers support hundreds of neighbor cache entries. Also, many smaller networks currently offer prefix delegation but assume that a limited number of specialized devices and/or applications will require delegated prefixes, and thus do not allocate enough address space to offer prefixes to every device that connects to the network. For example, if hosts enable <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> on a home network that only provides a /60, and each host obtains a /64 prefix, then the network will run out of prefixes after 15 devices connect.
+<xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> documents an IPv6 address assignment model where IPv6 devices obtain dedicated prefixes from the network via DHCPv6 Prefix Delegation (DHCPv6-PD, <xref target="RFC8415"/>).
+This model provides devices with large amounts of address space that they can use to individually number virtual machines (VM)s or containers or extend the network to downstream devices. It also provides scalability benefits on large networks because network infrastructure devices do not need to maintain per-address state, such as IPv6 neighbor cache, Source Address Validation Improvement (SAVI, <xref target="RFC7039"/>)  mappings, Virtual eXtensible Local Area Network (VXLAN, <xref target="RFC7348"/>) routes, etc.
+On smaller networks, scaling to support multiple individual IPv6 addresses is less of a concern, because many home routers support hundreds of neighbor cache entries. Also, many smaller networks currently offer prefix delegation but assume that a limited number of specialized devices and/or applications will require delegated prefixes, and thus do not allocate enough address space to offer prefixes to every device that connects to the network. For example, if hosts enable <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> on a home network that only provides a /60, and each host obtains a /64 prefix, then the network will run out of prefixes after 15 devices have been connected.
 </t>
 <t>
 Therefore, to safely roll out <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> implementations on the client side, it is necessary to have a mechanism for the network to signal to the host which address assignment method is preferred.
@@ -128,6 +128,12 @@ Therefore, to safely roll out <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/>
 <section>
 <name>Terminology</name>
 <t>
+                              Node: a device that implements IPv6, <xref target="RFC8200"/>.
+              </t>
+              <t>
+                              Host: any node that is not a router, <xref target="RFC8200"/>.
+              </t>
+<t>
 Client: a node which connects to a network and acquires addresses. The node may wish to obtain addresses for its own use, or may be a router that wishes to extend the network to its physical or virtual subsystems, or both. It may be either a host or a router as defined by <xref target="RFC8200"/>.
         </t>
 <t>
@@ -140,13 +146,7 @@ DHCPv6 IA_NA: Identity Association for Non-temporary Addresses (Section 21.4 of 
 DHCPv6 IA_PD: Identity Association for Prefix Delegation (Section 21.21 of <xref target="RFC8415"/>).
 </t>
               <t>
-                              Host: any node that is not a router, <xref target="RFC8200"/>.
-              </t>
-              <t>
                       ND: Neighbor Discovery, <xref target="RFC4861"/>.
-              </t>
-<t>
-                              Node: a device that implements IPv6, <xref target="RFC8200"/>.
               </t>
       
 <t>
@@ -182,7 +182,7 @@ Forming addresses via SLAAC is suboptimal because if the host later acquires a p
 
 </li>
 <li>
-This information is specific to the particular prefix being announced. For example, a network administrator might want hosts to assign global addresses from delegated prefixes, but use the PIO prefix to form ULA addresses.
+This information is specific to the particular prefix being announced. For example, a network administrator might want hosts to assign global addresses from delegated prefixes, but use the PIO prefix to form Unique Local Unicast (ULA, <xref target="RFC4193"/>) addresses.
 Also, in a multihoming situation, one upstream network might choose to assign prefixes via prefix delegation, and another via PIOs.
 
 </li>
@@ -200,11 +200,11 @@ For hosts that honor this preference by requesting prefix delegation, the actual
 <t>
 The P flag (also called DHCPv6-PD preferred flag) is a 1-bit PIO flag, located after the R flag (<xref target="RFC6275"/>).
 
-The presence of a PIO with the P flag set indicates that that the network prefers that hosts use Prefix Delegation instead of acquiring individual addresses via SLAAC or DHCPv6 address assignment. This implies that the network has a DHCPv6 server capable of making DHCPv6 Prefix Delegations to every device on the network, as described in <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/>.</t>
+The presence of a PIO with the P flag set indicates that the network prefers that hosts use Prefix Delegation instead of acquiring individual addresses via SLAAC or DHCPv6 address assignment. This implies that the network has a DHCPv6 server capable of making DHCPv6 Prefix Delegations to every device on the network, as described in <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/>.</t>
 
 <t>
 Adding the P flag reduces the PIO Reserved1 field (<xref target="RFC4861"/>, <xref target="RFC8425"/>) from 5 bits to 4 bits.
-The resulting format of the Prefix Information Option is as follows:
+The resulting format of the Prefix Information Option is as follows (see Figure 1):
 </t>
 
 <figure align="center" anchor="fig_pio_new">
@@ -235,7 +235,7 @@ The resulting format of the Prefix Information Option is as follows:
 
 <t>
 The P flag is independent from the value of the M and O flags in the Router Advertisement.
-If the network desires to delegate prefixes to devices that support DHCPv6 Prefix Delegation but do not support the P flag, it SHOULD also set the M or O bits in the RA to 1, because some devices, such as <xref target="RFC7084"/> CE routers, might not initiate DHCPv6 Prefix Delegation if both the M and O bits are set to zero.
+If the network desires to delegate prefixes to devices that support DHCPv6 Prefix Delegation but do not support the P flag, it SHOULD also set the M or O bits in the RA to 1, because some devices, such as <xref target="RFC7084"/> Customer Edge (CE) routers, might not initiate DHCPv6 Prefix Delegation if both the M and O bits are set to zero.
 </t>
 </section>
 
@@ -290,7 +290,7 @@ delegated prefix(es).
 </li>
 </ul>
 <t>
-When a host requests a prefix via DHCPv6-PD, it MUST use the prefix length hint <xref target="RFC8415" section="18.2.4"/> to request a prefix that is short enough to form addresses via SLAAC.</t>
+When a host requests a prefix via DHCPv6-PD, it MUST use the prefix length hint (<xref target="RFC8415" section="18.2.4"/>) to request a prefix that is short enough to form addresses via SLAAC.</t>
 
 <t>In order to achieve the scalability benefits of using DHCPv6-PD, the host SHOULD prefer
 to form addresses from the delegated prefix instead of using individual addresses in the
@@ -328,7 +328,7 @@ The host MAY use the prefix to allow devices directly connected to it to obtain 
 </li>
 </ul>
 
-<t>The host MUST NOT forward packets with destination addresses within a delegated prefix to the interface that it obtained the prefix on, as this will cause a routing loop. This problem will not occur if the host has assigned the prefix to a downstream interface. If the host has not assigned the prefix to a downstream interface, then one way to prevent this problem this is to add to its routing table a high-metric discard route for the delegated prefix. Similarly, the host MUST NOT send packets with destination addresses in the delegated prefix to the interface that it obtained the prefix on.</t>
+<t>The host MUST NOT forward packets with destination addresses within a delegated prefix to the interface that it obtained the prefix on, as this will cause a routing loop. This problem will not occur if the host has assigned the prefix to a downstream interface. If the host has not assigned the prefix to a downstream interface, then one way to prevent this problem is to add to its routing table a high-metric discard route for the delegated prefix. Similarly, the host MUST NOT send packets with destination addresses in the delegated prefix to the interface that it obtained the prefix on.</t>
 	
 </section>
 
@@ -357,7 +357,7 @@ When the network delegates unique prefixes to clients, each client will consider
 <section anchor="addrselect">
 <name>Source Address Selection</name>
 <t>
-For the purpose of source address selection <xref target="RFC6724"/>, if the host forms addresses from a delegated prefix, it SHOULD treat those addresses as if they were assigned to the interface on which the prefix was received. This includes placing them in the candidate set, and associating them with the outgoing interface when implementing rule 5.
+For the purpose of source address selection <xref target="RFC6724"/>, if the host forms addresses from a delegated prefix, it SHOULD treat those addresses as if they were assigned to the interface on which the prefix was received. This includes placing them in the candidate set, and associating them with the outgoing interface when implementing Rule 5 of the source address selection algorithm.
 </t>
 </section>
 
@@ -382,7 +382,7 @@ DHCPv6 relays.
 
 <section anchor="rfcchanges">
 <name>
-Modifications to RFC-Mandated Behavior 
+Modifications to RFC-Mandated Behaviour 
 </name>
 
 <section>
@@ -439,7 +439,7 @@ a) If the P flag is set, the node SHOULD treat the Autonomous flag as if it was 
       <name>Security Considerations</name>
 <t>
 	The mechanism described in this document relies on the information provided in the Router Advertisement and therefore shares the same security model as SLAAC.
-	If the network doesn't implement RA Guard <xref target="RFC6105"/>, an attacker might send RAs containing the PIO used by the network, set the P flag to 1 and force hosts to ignore the A flag. 
+	If the network does not implement RA Guard <xref target="RFC6105"/>, an attacker might send RAs containing the PIO used by the network, set the P flag to 1 and force hosts to ignore the A flag. 
 	In the absence of DHCPv6-PD infrastructure, hosts would either obtain no IPv6 addresses or, if they fall back to other IPv6 address assignment mechanisms such as SLAAC and IA_NA, would experience delays in obtaining IPv6 addresses. If the network does not support DHCPv6-Shield <xref target="RFC7610"/>, the attacker could also run a rogue DHCPv6 server, providing the host with invalid prefixes or other invalid configuration information.
 </t>
 	    <t>
@@ -512,9 +512,11 @@ Sending DHCPv6 packets  may reveal some minor additional information about the h
 	      <name>Informative References</name>
 	      <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.6105.xml"/>
         <xi:include href="https://bib.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-v6ops-dhcp-pd-per-device.xml"/>
+	      <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.4193.xml"/>
 	      <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.6275.xml"/>
 	      <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.7084.xml"/>
 	      <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.7039.xml"/>
+	      <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.7348.xml"/>
 	      <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.7610.xml"/>
               <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.8200.xml"/>
       </references>
@@ -523,7 +525,7 @@ Sending DHCPv6 packets  may reveal some minor additional information about the h
     <section anchor="Acknowledgements" numbered="false">
       <name>Acknowledgements</name>
 <t>
-Thanks to Nick Buraglio, Brian Carpenter, Tim Chown, David Farmer, Fernando Gont, Suresh Krishnan, Ted Lemon, Andrew McGregor, Tomek Mrugalski, Michael Richardson, Ole Trøan, Timothy Winters for the discussions, the input and all contributions.
+Thanks to Nick Buraglio, Brian Carpenter, Tim Chown, David Farmer, Fernando Gont, Susan Hares, Dirk Von Hugo, Suresh Krishnan, Ted Lemon, Andrew McGregor, Tomek Mrugalski, Michael Richardson, Ole Trøan, Timothy Winters for the discussions, reviews, the input and all contributions.
 </t>
     </section>
     
