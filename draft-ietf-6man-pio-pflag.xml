@@ -202,7 +202,7 @@ For hosts that honor this preference by requesting prefix delegation, the actual
 <t>
 The P flag (also called DHCPv6-PD preferred flag) is a 1-bit PIO flag, located after the R flag (<xref target="RFC6275"/>).
 
-The presence of a PIO with the P flag set indicates that the network prefers that hosts use Prefix Delegation instead of acquiring individual addresses via SLAAC or DHCPv6 address assignment. This implies that the network has a DHCPv6 server capable of making DHCPv6 Prefix Delegations to every device on the network, as described in <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/>.</t>
+The presence of a PIO with the P flag set indicates that the network prefers that hosts use Prefix Delegation instead of acquiring individual addresses via SLAAC or DHCPv6 address assignment. This implies that the network has a DHCPv6 server capable of making DHCPv6 Prefix Delegations of a size suitable to use SLAAC to every device on the network, as described in <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/>.</t>
 
 <t>
 Adding the P flag reduces the PIO Reserved1 field (<xref target="RFC4861"/>, <xref target="RFC8425"/>) from 5 bits to 4 bits.
