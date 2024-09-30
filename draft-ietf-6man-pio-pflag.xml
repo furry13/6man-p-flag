@@ -246,6 +246,9 @@ If the network desires to delegate prefixes to devices that support DHCPv6 Prefi
 <t>
 Routers SHOULD set the P flag to zero by default, unless explicitly configured by the administrator, and SHOULD allow the operator to set the P flag value for any given prefix.
 </t>
+<t>
+The P flag MUST be set independently from the A flag. In particular, enabling or disabling the P flag MUST not trigger automatic changes in the A flag value set by the router.
+</t>
 </section>
 <section anchor="host">
 <name>Host Behaviour</name>
@@ -376,7 +379,7 @@ In multi-prefix multihoming, the host generally needs to associate the prefix wi
 When receiving multiple REPLYs carrying the same prefix from distinct
 link-local addresses, the host SHOULD associate that prefix with all of these
 addresses.  This can commonly happen in networks with redundant routers and
-DHCPv6 server or relays.
+DHCPv6 servers or relays.
 
 
 </t>
