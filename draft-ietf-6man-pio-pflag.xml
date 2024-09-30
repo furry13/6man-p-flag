@@ -330,7 +330,8 @@ The host MAY use the prefix to allow devices directly connected to it to obtain 
 </li>
 </ul>
 
-<t>The host MUST NOT forward packets with destination addresses within a delegated prefix to the interface that it obtained the prefix on, as this will cause a routing loop. This problem will not occur if the host has assigned the prefix to another interface. Another way the host can prevent this problem is to add to its routing table a high-metric discard route for the delegated prefix. Similarly, the host MUST NOT send packets with destination addresses in the delegated prefix to the interface that it obtained the prefix on.</t>
+<t>The host MUST NOT forward or originate packets with destination addresses within a delegated prefix to the interface that it obtained the prefix on, as this will cause a routing loop. This problem will not occur if the host has assigned the prefix to another interface. Another way the host can prevent this problem is to add to its routing table a high-metric discard route for the delegated prefix.
+</t>
 	
 </section>
 
@@ -371,11 +372,11 @@ Multihoming
 </name>
 
 <t>
-In multi-prefix multihoming, the host generally needs to associate the prefix with the router that advertised it (see for example, <xref target="RFC6724"/> Rule 5.5). If the host supports Rule 5.5, then it SHOULD associate each prefix with the link-local address of the DHCPv6 relay from which it received the REPLY packet.
+In multi-prefix multihoming, the host generally needs to associate the prefix with the router that advertised it (see for example, <xref target="RFC6724"/> Rule 5.5). If the host supports Rule 5.5, then it SHOULD associate each prefix with the link-local address of the DHCPv6 server or relay from which it received the REPLY packet.
 When receiving multiple REPLYs carrying the same prefix from distinct
 link-local addresses, the host SHOULD associate that prefix with all of these
 addresses.  This can commonly happen in networks with redundant routers and
-DHCPv6 relays.
+DHCPv6 server or relays.
 
 
 </t>
@@ -527,7 +528,7 @@ Sending DHCPv6 packets  may reveal some minor additional information about the h
     <section anchor="Acknowledgements" numbered="false">
       <name>Acknowledgements</name>
 <t>
-Thanks to Nick Buraglio, Brian Carpenter, Tim Chown, David Farmer, Fernando Gont, Susan Hares, Dirk Von Hugo, Suresh Krishnan, Ted Lemon, Andrew McGregor, Tomek Mrugalski, Michael Richardson, Ole Trøan, Timothy Winters for the discussions, reviews, the input and all contributions.
+Thanks to Nick Buraglio, Brian Carpenter, Tim Chown, David Farmer, Fernando Gont, Susan Hares, Dirk Von Hugo, Suresh Krishnan, Ted Lemon, Andrew McGregor, Erik Nordmark, Tomek Mrugalski, Michael Richardson, Ole Trøan, Timothy Winters for the discussions, reviews, the input and all contributions.
 </t>
     </section>
     
