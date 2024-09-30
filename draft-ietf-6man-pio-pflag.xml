@@ -270,9 +270,9 @@ from a PIO with the P flag set and currently has a non-zero Preferred Lifetime.
 The list affects the behaviour of the DHCPv6 client as follows:
 </t>
 <ul>
-<li>When a prefix's Preferred Lifetime becomes zero, either due to expiration
-or due to the receipt of a PIO with a Preferred Lifetime of zero, the prefix MUST
-be removed from the list.
+<li>When a prefix's Preferred Lifetime becomes zero, either because the Preferred
+Lifetime expires or because the host receives a PIO for the prefix with a zero
+Preferred Lifetime, the prefix MUST be removed from the list.
 </li>
 <li>When the length of the list increases to one, the host SHOULD start requesting
 prefixes via DHCPv6 prefix delegation unless it is already doing so.</li>
