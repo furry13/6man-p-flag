@@ -311,7 +311,7 @@ Using Delegated Prefix(es)
 </name>
 
 	<t>
-		If the delegated prefix is too long to be used for SLAAC, the host MUST ignore it.
+		If the delegated prefix is too long to be used for SLAAC, the host MUST ignore it, as Section 7 of <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> requires the network to provide a SLAAC-suitable prefix to clients.
 	If the prefix is shorter than required for SLAAC, the host SHOULD accept it, allocate one or more longer prefix suitable for SLAAC and use the prefixes as described below.
 	</t>
 <t>
