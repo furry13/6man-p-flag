@@ -139,7 +139,7 @@ Therefore, to safely roll out <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/>
 Client: a node which connects to a network and acquires addresses. The node may wish to obtain addresses for its own use, or may be a router that wishes to extend the network to its physical or virtual subsystems, or both. It may be either a host or a router as defined by <xref target="RFC8200"/>.
         </t>
 <t>
-DHCPv6-PD:  DHCPv6 (<xref target="RFC8415"/>) mechanism to delegate IPv6 prefixes to clients.
+DHCPv6-PD: DHCPv6 (<xref target="RFC8415"/>) mechanism to delegate IPv6 prefixes to clients.
 </t>
 <t>
 DHCPv6 IA_NA: Identity Association for Non-temporary Addresses (Section 21.4 of <xref target="RFC8415"/>).
@@ -152,10 +152,10 @@ DHCPv6 IA_PD: Identity Association for Prefix Delegation (Section 21.21 of <xref
               </t>
       
 <t>
-NUD: Neighbor Unreachability Detection,  <xref target="RFC4861"/>.
+On-link address: an address that is assigned to an interface on a specified link (<xref target="RFC4861"/>).
 </t>
 <t>
-On-link prefix or address: a prefix or address that is assigned to an interface on a specified link. See <xref target="RFC4861"/> for a definition of an on-link node.
+On-link prefix: a prefix that is assigned to a specified link.
 </t>
 <t>
 Off-link: the opposite of "on-link" (see <xref target="RFC4861"/>).
@@ -284,7 +284,7 @@ If the host has already received delegated prefix(es) from one or more
 servers, then any time a prefix is added to or removed from the list, the host MUST
 consider this to be a change in configuration information as
 described in <xref target="RFC8415" section="18.2.12"/>. In that case the host MUST perform
-a REBIND or, if the list became empty, stop the DHCPv6 client.
+a REBIND, unless the list is now empty.
 This is in addition to performing a REBIND in the other cases required by that
 section. Issuing a REBIND allows the host to obtain new prefixes if necessary, for example
 when the network is being renumbered. It also refreshes state related to the
@@ -326,7 +326,7 @@ The host MAY form as many IPv6 addresses from the prefix as it chooses.
 The host MAY use the prefix to provide IPv6 addresses to internal components such as virtual machines or containers.
 </li>
 <li>
-The host MAY use the prefix to allow devices directly connected to it to obtain IPv6 addresses. For example, the host MAY route traffic for that prefix to the interface and send a Router Advertisement containing the prefix on the interface. If the host does so, and it has has formed addresses from the prefix, then it MUST act as though the addresses were assigned to that interface for the purposes of Neighbour Discovery and Duplicate Address Detection.
+The host MAY use the prefix to allow devices directly connected to it to obtain IPv6 addresses. For example, the host MAY route traffic for that prefix to the interface and send a Router Advertisement containing a PIO for the prefix on the interface. If the host does so, and it has has formed addresses from the prefix, then it MUST act as though the addresses were assigned to that interface for the purposes of Neighbour Discovery and Duplicate Address Detection.
 </li>
 </ul>
 
