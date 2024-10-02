@@ -236,7 +236,7 @@ The resulting format of the Prefix Information Option is as follows (see Figure 
 
 
 <t>
-The P flag is independent from the value of the M and O flags in the Router Advertisement.
+The P flag is independent of the value of the M and O flags in the Router Advertisement.
 If the network desires to delegate prefixes to devices that support DHCPv6 Prefix Delegation but do not support the P flag, it SHOULD also set the M or O bits in the RA to 1, because some devices, such as <xref target="RFC7084"/> Customer Edge (CE) routers, might not initiate DHCPv6 Prefix Delegation if both the M and O bits are set to zero.
 </t>
 </section>
@@ -245,6 +245,7 @@ If the network desires to delegate prefixes to devices that support DHCPv6 Prefi
 <name>Router Behaviour</name>
 <t>
 Routers SHOULD set the P flag to zero by default, unless explicitly configured by the administrator, and SHOULD allow the operator to set the P flag value for any given prefix.
+Routers MUST allow the P flag to be configured separately from the A flag.  In particular, enabling or disabling the P flag MUST not trigger automatic changes in the A flag value set by the router.
 </t>
 </section>
 <section anchor="host">
@@ -326,11 +327,12 @@ The host MAY form as many IPv6 addresses from the prefix as it chooses.
 The host MAY use the prefix to provide IPv6 addresses to internal components such as virtual machines or containers.
 </li>
 <li>
-The host MAY use the prefix to allow devices directly connected to it to obtain IPv6 addresses. For example, the host MAY route traffic for that prefix to the interface and send a Router Advertisement containing a PIO for the prefix on the interface. If the host does so, and it has has formed addresses from the prefix, then it MUST act as though the addresses were assigned to that interface for the purposes of Neighbour Discovery and Duplicate Address Detection.
+The host MAY use the prefix to allow devices directly connected to it to obtain IPv6 addresses. For example, the host MAY route traffic for that prefix to the interface and send a Router Advertisement containing a PIO for the prefix on the interface. If the host does so, and it has formed addresses from the prefix, then it MUST act as though the addresses were assigned to that interface for the purposes of Neighbour Discovery and Duplicate Address Detection.
 </li>
 </ul>
 
-<t>The host MUST NOT forward packets with destination addresses within a delegated prefix to the interface that it obtained the prefix on, as this will cause a routing loop. This problem will not occur if the host has assigned the prefix to another interface. Another way the host can prevent this problem is to add to its routing table a high-metric discard route for the delegated prefix. Similarly, the host MUST NOT send packets with destination addresses in the delegated prefix to the interface that it obtained the prefix on.</t>
+<t>The host MUST NOT send or forward packets with destination addresses within a delegated prefix to the interface that it obtained the prefix on, as this can cause a routing loop. This problem will not occur if the host has assigned the prefix to another interface. Another way the host can prevent this problem is to add to its routing table a high-metric discard route for the delegated prefix.
+</t>
 	
 </section>
 
@@ -359,7 +361,7 @@ When the network delegates unique prefixes to clients, each client will consider
 <section anchor="addrselect">
 <name>Source Address Selection</name>
 <t>
-For the purpose of source address selection <xref target="RFC6724"/>, if the host forms addresses from a delegated prefix, it SHOULD treat those addresses as if they were assigned to the interface on which the prefix was received. This includes placing them in the candidate set, and associating them with the outgoing interface when implementing Rule 5 of the source address selection algorithm.
+For the purpose of source address selection <xref target="RFC6724"/>, if the host creates any addresses from a delegated prefix, it SHOULD treat those addresses as if they were assigned to the interface on which the prefix was received. This includes placing them in the candidate set, and associating them with the outgoing interface when implementing Rule 5 of the source address selection algorithm.
 </t>
 </section>
 
@@ -371,11 +373,11 @@ Multihoming
 </name>
 
 <t>
-In multi-prefix multihoming, the host generally needs to associate the prefix with the router that advertised it (see for example, <xref target="RFC6724"/> Rule 5.5). If the host supports Rule 5.5, then it SHOULD associate each prefix with the link-local address of the DHCPv6 relay from which it received the REPLY packet.
+In multi-prefix multihoming, the host generally needs to associate the prefix with the router that advertised it (see for example, <xref target="RFC6724"/> Rule 5.5). If the host supports Rule 5.5, then it SHOULD associate each prefix with the link-local address of the DHCPv6 server or relay from which it received the REPLY packet.
 When receiving multiple REPLYs carrying the same prefix from distinct
 link-local addresses, the host SHOULD associate that prefix with all of these
 addresses.  This can commonly happen in networks with redundant routers and
-DHCPv6 relays.
+DHCPv6 servers or relays.
 
 
 </t>
@@ -397,7 +399,7 @@ This document makes the following changes to Section 5.5.3 of <xref target="RFC4
 
 
 <t>
-OLD TEXT
+OLD TEXT:
 </t>
 <t>
 ===
@@ -413,20 +415,62 @@ For each Prefix-Information option in the Router Advertisement:
     a)  If the Autonomous flag is not set, silently ignore the Prefix
       Information option.
 </t>
+<t>
+ b)  If the prefix is the link-local prefix, silently ignore the Prefix Information option.
+</t>
+<t>
+c)  If the preferred lifetime is greater than the valid lifetime, silently ignore the Prefix Information option.  A node MAY wish to log a system management error in this case.
+</t>
+<t>
+d)  If the prefix advertised is not equal to the prefix of an
+      address configured by stateless autoconfiguration already in the
+      list of addresses associated with the interface (where "equal"
+      means the two prefix lengths are the same and the first prefix-
+      length bits of the prefixes are identical), and if the Valid
+      Lifetime is not 0, form an address (and add it to the list) by
+      combining the advertised prefix with an interface identifier of
+      the link as follows:
+</t>
 
 <t>
 ===
 </t>
 <t>
 NEW TEXT:
-	Insert the following text after "For each Prefix-Information option in the Router Advertisement:" but before "If the Autonomous flag is not set, silently ignore the Prefix Information option.":
 </t>
 <t>
 ===
 </t>
 <t>
-a) If the P flag is set, the node SHOULD treat the Autonomous flag as if it was unset, and use prefix delegation to obtain addresses as described in draft-ietf-6man-pio-pflag.
+For each Prefix-Information option in the Router Advertisement:
 </t>
+
+<t>
+a) If the P flag is set, and the node implements draft-ietf-6man-pio-pflag, it SHOULD treat the Autonomous flag as if it was unset, and use prefix delegation to obtain addresses as described in draft-ietf-6man-pio-pflag.
+</t>
+
+<t>
+
+    b)  If the Autonomous flag is not set, silently ignore the Prefix
+      Information option.
+</t>
+<t>
+ c)  If the prefix is the link-local prefix, silently ignore the Prefix Information option.
+</t>
+<t>
+d)  If the preferred lifetime is greater than the valid lifetime, silently ignore the Prefix Information option.  A node MAY wish to log a system management error in this case.
+</t>
+<t>
+e)  If the prefix advertised is not equal to the prefix of an
+      address configured by stateless autoconfiguration already in the
+      list of addresses associated with the interface (where "equal"
+      means the two prefix lengths are the same and the first prefix-
+      length bits of the prefixes are identical), and if the Valid
+      Lifetime is not 0, form an address (and add it to the list) by
+      combining the advertised prefix with an interface identifier of
+      the link as follows:
+</t>
+
 <t>
 ===
 </t>
@@ -447,7 +491,7 @@ a) If the P flag is set, the node SHOULD treat the Autonomous flag as if it was 
 	    <t>
 		    The attacker might force hosts to oscillate between DHCPv6-PD and PIO-based SLAAC by sending the same set of PIOs with and then w/o P flag set.
 		    That would cause the clients to issue REBIND requests, increasing the load on the DHCP infrastructure. 
-		    However Section 14.1 of <xref target="RFC8415"/> requires that DHCPv6-PD clients rate limit transmitted DHCPv6 messages.
+		    However, Section 14.1 of <xref target="RFC8415"/> requires that DHCPv6-PD clients rate limit transmitted DHCPv6 messages.
 </t>
 		    
 	    <t>
@@ -527,7 +571,7 @@ Sending DHCPv6 packets  may reveal some minor additional information about the h
     <section anchor="Acknowledgements" numbered="false">
       <name>Acknowledgements</name>
 <t>
-Thanks to Nick Buraglio, Brian Carpenter, Tim Chown, David Farmer, Fernando Gont, Susan Hares, Dirk Von Hugo, Suresh Krishnan, Ted Lemon, Andrew McGregor, Tomek Mrugalski, Michael Richardson, Ole Trøan, Timothy Winters for the discussions, reviews, the input and all contributions.
+Thanks to Nick Buraglio, Brian Carpenter, Tim Chown, David Farmer, Fernando Gont, Susan Hares, Dirk Von Hugo, Mahesh Jethanandani, Suresh Krishnan, Ted Lemon, Andrew McGregor, Erik Nordmark, Tomek Mrugalski, Michael Richardson, John Scudder, Ole Trøan, Timothy Winters for the discussions, reviews, the input and all contributions.
 </t>
     </section>
     
