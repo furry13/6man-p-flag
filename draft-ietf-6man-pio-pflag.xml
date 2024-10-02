@@ -139,7 +139,7 @@ Therefore, to safely roll out <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/>
 Client: a node which connects to a network and acquires addresses. The node may wish to obtain addresses for its own use, or may be a router that wishes to extend the network to its physical or virtual subsystems, or both. It may be either a host or a router as defined by <xref target="RFC8200"/>.
         </t>
 <t>
-DHCPv6-PD: DHCPv6 (<xref target="RFC8415"/>) mechanism to delegate IPv6 prefixes to clients.
+DHCPv6-PD: DHCPv6 Prefix Delegation (<xref target="RFC8415"/>); a mechanism to delegate IPv6 prefixes to clients.
 </t>
 <t>
 DHCPv6 IA_NA: Identity Association for Non-temporary Addresses (Section 21.4 of <xref target="RFC8415"/>).
