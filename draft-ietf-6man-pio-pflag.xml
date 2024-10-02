@@ -331,7 +331,7 @@ The host MAY use the prefix to allow devices directly connected to it to obtain 
 </li>
 </ul>
 
-<t>The host MUST NOT forward or originate packets with destination addresses within a delegated prefix to the interface that it obtained the prefix on, as this will cause a routing loop. This problem will not occur if the host has assigned the prefix to another interface. Another way the host can prevent this problem is to add to its routing table a high-metric discard route for the delegated prefix.
+<t>The host MUST NOT send or forward packets with destination addresses within a delegated prefix to the interface that it obtained the prefix on, as this will cause a routing loop. This problem will not occur if the host has assigned the prefix to another interface. Another way the host can prevent this problem is to add to its routing table a high-metric discard route for the delegated prefix.
 </t>
 	
 </section>
