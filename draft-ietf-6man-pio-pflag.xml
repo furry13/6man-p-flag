@@ -401,7 +401,7 @@ This document makes the following changes to Section 5.5.3 of <xref target="RFC4
 
 
 <t>
-OLD TEXT
+OLD TEXT:
 </t>
 <t>
 ===
@@ -417,20 +417,62 @@ For each Prefix-Information option in the Router Advertisement:
     a)  If the Autonomous flag is not set, silently ignore the Prefix
       Information option.
 </t>
+<t>
+ b)  If the prefix is the link-local prefix, silently ignore the Prefix Information option.
+</t>
+<t>
+c)  If the preferred lifetime is greater than the valid lifetime, silently ignore the Prefix Information option.  A node MAY wish to log a system management error in this case.
+</t>
+<t>
+d)  If the prefix advertised is not equal to the prefix of an
+      address configured by stateless autoconfiguration already in the
+      list of addresses associated with the interface (where "equal"
+      means the two prefix lengths are the same and the first prefix-
+      length bits of the prefixes are identical), and if the Valid
+      Lifetime is not 0, form an address (and add it to the list) by
+      combining the advertised prefix with an interface identifier of
+      the link as follows:
+</t>
 
 <t>
 ===
 </t>
 <t>
 NEW TEXT:
-	Insert the following text after "For each Prefix-Information option in the Router Advertisement:" but before "If the Autonomous flag is not set, silently ignore the Prefix Information option.":
 </t>
 <t>
 ===
 </t>
 <t>
+For each Prefix-Information option in the Router Advertisement:
+</t>
+
+<t>
 a) If the P flag is set, the node SHOULD treat the Autonomous flag as if it was unset, and use prefix delegation to obtain addresses as described in draft-ietf-6man-pio-pflag.
 </t>
+
+<t>
+
+    b)  If the Autonomous flag is not set, silently ignore the Prefix
+      Information option.
+</t>
+<t>
+ c)  If the prefix is the link-local prefix, silently ignore the Prefix Information option.
+</t>
+<t>
+d)  If the preferred lifetime is greater than the valid lifetime, silently ignore the Prefix Information option.  A node MAY wish to log a system management error in this case.
+</t>
+<t>
+e)  If the prefix advertised is not equal to the prefix of an
+      address configured by stateless autoconfiguration already in the
+      list of addresses associated with the interface (where "equal"
+      means the two prefix lengths are the same and the first prefix-
+      length bits of the prefixes are identical), and if the Valid
+      Lifetime is not 0, form an address (and add it to the list) by
+      combining the advertised prefix with an interface identifier of
+      the link as follows:
+</t>
+
 <t>
 ===
 </t>
@@ -531,7 +573,7 @@ Sending DHCPv6 packets  may reveal some minor additional information about the h
     <section anchor="Acknowledgements" numbered="false">
       <name>Acknowledgements</name>
 <t>
-Thanks to Nick Buraglio, Brian Carpenter, Tim Chown, David Farmer, Fernando Gont, Susan Hares, Dirk Von Hugo, Mahesh Jethanandani, Suresh Krishnan, Ted Lemon, Andrew McGregor, Erik Nordmark, Tomek Mrugalski, Michael Richardson, Ole Trøan, Timothy Winters for the discussions, reviews, the input and all contributions.
+Thanks to Nick Buraglio, Brian Carpenter, Tim Chown, David Farmer, Fernando Gont, Susan Hares, Dirk Von Hugo, Mahesh Jethanandani, Suresh Krishnan, Ted Lemon, Andrew McGregor, Erik Nordmark, Tomek Mrugalski, Michael Richardson, John Scudder, Ole Trøan, Timothy Winters for the discussions, reviews, the input and all contributions.
 </t>
     </section>
     
