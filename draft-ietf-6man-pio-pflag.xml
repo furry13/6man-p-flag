@@ -331,7 +331,7 @@ The host MAY use the prefix to allow devices directly connected to it to obtain 
 </li>
 </ul>
 
-<t>The host MUST NOT send or forward packets with destination addresses within a delegated prefix to the interface that it obtained the prefix on, as this will cause a routing loop. This problem will not occur if the host has assigned the prefix to another interface. Another way the host can prevent this problem is to add to its routing table a high-metric discard route for the delegated prefix.
+<t>The host MUST NOT send or forward packets with destination addresses within a delegated prefix to the interface that it obtained the prefix on, as this can cause a routing loop. This problem will not occur if the host has assigned the prefix to another interface. Another way the host can prevent this problem is to add to its routing table a high-metric discard route for the delegated prefix.
 </t>
 	
 </section>
@@ -361,7 +361,7 @@ When the network delegates unique prefixes to clients, each client will consider
 <section anchor="addrselect">
 <name>Source Address Selection</name>
 <t>
-For the purpose of source address selection <xref target="RFC6724"/>, if the host forms its addresses from a delegated prefix, it SHOULD treat those addresses as if they were assigned to the interface on which the prefix was received. This includes placing them in the candidate set, and associating them with the outgoing interface when implementing Rule 5 of the source address selection algorithm.
+For the purpose of source address selection <xref target="RFC6724"/>, if the host creates any addresses from a delegated prefix, it SHOULD treat those addresses as if they were assigned to the interface on which the prefix was received. This includes placing them in the candidate set, and associating them with the outgoing interface when implementing Rule 5 of the source address selection algorithm.
 </t>
 </section>
 
@@ -446,7 +446,7 @@ For each Prefix-Information option in the Router Advertisement:
 </t>
 
 <t>
-a) If the P flag is set, the node SHOULD treat the Autonomous flag as if it was unset, and use prefix delegation to obtain addresses as described in draft-ietf-6man-pio-pflag.
+a) If the P flag is set, and the node implements draft-ietf-6man-pio-pflag, it SHOULD treat the Autonomous flag as if it was unset, and use prefix delegation to obtain addresses as described in draft-ietf-6man-pio-pflag.
 </t>
 
 <t>
