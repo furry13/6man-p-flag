@@ -236,7 +236,7 @@ The resulting format of the Prefix Information Option is as follows (see Figure 
 
 
 <t>
-The P flag is independent from the value of the M and O flags in the Router Advertisement.
+The P flag is independent of the value of the M and O flags in the Router Advertisement.
 If the network desires to delegate prefixes to devices that support DHCPv6 Prefix Delegation but do not support the P flag, it SHOULD also set the M or O bits in the RA to 1, because some devices, such as <xref target="RFC7084"/> Customer Edge (CE) routers, might not initiate DHCPv6 Prefix Delegation if both the M and O bits are set to zero.
 </t>
 </section>
@@ -329,7 +329,7 @@ The host MAY form as many IPv6 addresses from the prefix as it chooses.
 The host MAY use the prefix to provide IPv6 addresses to internal components such as virtual machines or containers.
 </li>
 <li>
-The host MAY use the prefix to allow devices directly connected to it to obtain IPv6 addresses. For example, the host MAY route traffic for that prefix to the interface and send a Router Advertisement containing a PIO for the prefix on the interface. If the host does so, and it has has formed addresses from the prefix, then it MUST act as though the addresses were assigned to that interface for the purposes of Neighbour Discovery and Duplicate Address Detection.
+The host MAY use the prefix to allow devices directly connected to it to obtain IPv6 addresses. For example, the host MAY route traffic for that prefix to the interface and send a Router Advertisement containing a PIO for the prefix on the interface. If the host does so, and it has formed addresses from the prefix, then it MUST act as though the addresses were assigned to that interface for the purposes of Neighbour Discovery and Duplicate Address Detection.
 </li>
 </ul>
 
@@ -363,7 +363,7 @@ When the network delegates unique prefixes to clients, each client will consider
 <section anchor="addrselect">
 <name>Source Address Selection</name>
 <t>
-For the purpose of source address selection <xref target="RFC6724"/>, if the host forms addresses from a delegated prefix, it SHOULD treat those addresses as if they were assigned to the interface on which the prefix was received. This includes placing them in the candidate set, and associating them with the outgoing interface when implementing Rule 5 of the source address selection algorithm.
+For the purpose of source address selection <xref target="RFC6724"/>, if the host forms its addresses from a delegated prefix, it SHOULD treat those addresses as if they were assigned to the interface on which the prefix was received. This includes placing them in the candidate set, and associating them with the outgoing interface when implementing Rule 5 of the source address selection algorithm.
 </t>
 </section>
 
@@ -451,7 +451,7 @@ a) If the P flag is set, the node SHOULD treat the Autonomous flag as if it was 
 	    <t>
 		    The attacker might force hosts to oscillate between DHCPv6-PD and PIO-based SLAAC by sending the same set of PIOs with and then w/o P flag set.
 		    That would cause the clients to issue REBIND requests, increasing the load on the DHCP infrastructure. 
-		    However Section 14.1 of <xref target="RFC8415"/> requires that DHCPv6-PD clients rate limit transmitted DHCPv6 messages.
+		    However, Section 14.1 of <xref target="RFC8415"/> requires that DHCPv6-PD clients rate limit transmitted DHCPv6 messages.
 </t>
 		    
 	    <t>
@@ -531,7 +531,7 @@ Sending DHCPv6 packets  may reveal some minor additional information about the h
     <section anchor="Acknowledgements" numbered="false">
       <name>Acknowledgements</name>
 <t>
-Thanks to Nick Buraglio, Brian Carpenter, Tim Chown, David Farmer, Fernando Gont, Susan Hares, Dirk Von Hugo, Suresh Krishnan, Ted Lemon, Andrew McGregor, Erik Nordmark, Tomek Mrugalski, Michael Richardson, Ole Trøan, Timothy Winters for the discussions, reviews, the input and all contributions.
+Thanks to Nick Buraglio, Brian Carpenter, Tim Chown, David Farmer, Fernando Gont, Susan Hares, Dirk Von Hugo, Mahesh Jethanandani, Suresh Krishnan, Ted Lemon, Andrew McGregor, Erik Nordmark, Tomek Mrugalski, Michael Richardson, Ole Trøan, Timothy Winters for the discussions, reviews, the input and all contributions.
 </t>
     </section>
     
