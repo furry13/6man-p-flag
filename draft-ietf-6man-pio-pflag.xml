@@ -103,10 +103,10 @@ This document updates RFC4862 to indicate that the Autonomous flag in a PIO need
       <name>Introduction</name>
 <t>
 <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> documents an IPv6 address assignment model where IPv6 devices obtain dedicated prefixes from the network via DHCPv6 Prefix Delegation (DHCPv6-PD, <xref target="RFC8415"/>).
-This model provides devices with large amounts of address space that they can use to create addresses for communication, individually number virtual machines (VM)s or containers, or extend the network to downstream devices. It also provides scalability benefits on large networks because network infrastructure devices do not need to maintain per-address state, such as IPv6 neighbor cache, Source Address Validation Improvement (SAVI, <xref target="RFC7039"/>)  mappings, Virtual eXtensible Local Area Network (VXLAN, <xref target="RFC7348"/>) routes, etc.
+This model provides devices with large IPv6 address space they can use to create addresses for communication, individually number virtual machines (VM)s or containers, or extend the network to downstream devices. It also provides scalability benefits on large networks because network infrastructure devices do not need to maintain per-address state, such as IPv6 neighbor cache, Source Address Validation Improvement (SAVI, <xref target="RFC7039"/>)  mappings, Virtual eXtensible Local Area Network (VXLAN, <xref target="RFC7348"/>) routes, etc.
 </t>
 <t>
-On smaller networks, however, this model may not be appropriate. Scaling to support multiple individual IPv6 addresses is less of a concern, because many home routers support hundreds of neighbor cache entries. Also, many smaller networks currently offer prefix delegation but assume that a limited number of specialized devices and/or applications will require delegated prefixes, and thus do not allocate enough address space to offer prefixes to every device that connects to the network. For example, if hosts enable <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> on a home network that only provides a /60, and each host obtains a /64 prefix, then the network will run out of prefixes after 15 devices have been connected.
+On smaller networks, however, this model may not be appropriate, because scaling to support multiple individual IPv6 addresses per device is less of a concern. Also, many smaller networks currently offer prefix delegation but assume that a limited number of specialized devices and/or applications will require delegated prefixes, and thus do not allocate enough address space to offer prefixes to every device that connects to the network. For example, if hosts enable <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> on a home network that only receives a /60 from the ISP, and each host obtains a /64 prefix, then the network will run out of prefixes after 15 devices have been connected.
 </t>
 <t>
 Therefore, to safely roll out <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> implementations on the client side, it is necessary to have a mechanism for the network to signal to the host which address assignment method is preferred.
@@ -191,7 +191,7 @@ Also, in a multihoming situation, one upstream network might choose to assign pr
 </ul>
 
 <t>
-Note that setting the 'P' flag in a PIO option expresses the operator's preference as to whether hosts should attempt using DHCPv6-PD instead of performing individual address configuration on the prefix.
+Note that setting the 'P' flag in a PIO expresses the network operator's preference as to whether hosts should attempt using DHCPv6-PD instead of performing individual address configuration on the prefix.
 For hosts that honor this preference by requesting prefix delegation, the actual delegated prefix will necessarily be a prefix different from the one from the PIO.
 </t>
 
@@ -205,7 +205,6 @@ The P flag (also called DHCPv6-PD preferred flag) is a 1-bit PIO flag, located a
 The presence of a PIO with the P flag set indicates that the network prefers that hosts use Prefix Delegation instead of acquiring individual addresses via SLAAC or DHCPv6 address assignment. This implies that the network has a DHCPv6 server capable of making DHCPv6 Prefix Delegations to every device on the network, as described in <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/>.</t>
 
 <t>
-Adding the P flag reduces the PIO Reserved1 field (<xref target="RFC4861"/>, <xref target="RFC8425"/>) from 5 bits to 4 bits.
 The resulting format of the Prefix Information Option is as follows (see Figure 1):
 </t>
 
@@ -244,7 +243,7 @@ If the network desires to delegate prefixes to devices that support DHCPv6 Prefi
 <section anchor="Router">
 <name>Router Behaviour</name>
 <t>
-Routers SHOULD set the P flag to zero by default, unless explicitly configured by the administrator, and SHOULD allow the operator to set the P flag value for any given prefix.
+Routers SHOULD set the P flag to zero by default, unless explicitly configured by the administrator, and SHOULD allow the operator to set the P flag value for any given prefix advertized in a PIO.
 Routers MUST allow the P flag to be configured separately from the A flag.  In particular, enabling or disabling the P flag MUST not trigger automatic changes in the A flag value set by the router.
 </t>
 </section>
@@ -328,6 +327,7 @@ The host MAY use the prefix to provide IPv6 addresses to internal components suc
 </li>
 <li>
 The host MAY use the prefix to allow devices directly connected to it to obtain IPv6 addresses. For example, the host MAY route traffic for that prefix to the interface and send a Router Advertisement containing a PIO for the prefix on the interface. If the host does so, and it has formed addresses from the prefix, then it MUST act as though the addresses were assigned to that interface for the purposes of Neighbour Discovery and Duplicate Address Detection.
+That interface MUST NOT be the interface the prefix is obtained from.
 </li>
 </ul>
 
@@ -355,6 +355,7 @@ by <xref target="RFC7084"/>.
 <name>On-link Communication</name>
 <t>
 When the network delegates unique prefixes to clients, each client will consider other client's destination addresses to be off-link, because those addresses are from the delegated prefixes and are not within any on-link prefix. When a client sends traffic to another client, packets will initially be sent to the default router. The router may respond with an ICMPv6 redirect message (Section 4.5 of [RFC4861]). If the client receives and accepts the redirect, then traffic can flow directly from device to device. Therefore, hosts supporting the P flag SHOULD process redirects unless configured otherwise.
+Hosts which do not process ICMPv6 redirects may experience higher latency while communicating to prefixes delegated to other hosts on the same link.
 </t>
 </section>
 
