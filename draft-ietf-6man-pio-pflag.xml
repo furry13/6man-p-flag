@@ -16,16 +16,16 @@
 <rfc
   xmlns:xi="http://www.w3.org/2001/XInclude"
   category="std"
-  docName="draft-ietf-6man-pio-pflag-10"
+  docName="draft-ietf-6man-pio-pflag-11"
   ipr="trust200902"
   obsoletes=""
-  updates="4862"
+  updates="4861,4862"
   submissionType="IETF"
   xml:lang="en"
   version="3">
   <front>
 <title abbrev="pio-p-flag">Signaling DHCPv6 Prefix per Client Availability to Hosts</title>
-    <seriesInfo name="Internet-Draft" value="draft-ietf-6man-pio-pflag-10"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-6man-pio-pflag-11"/>
 
  <author initials="L." surname="Colitti" fullname="Lorenzo Colitti">
       <organization>Google</organization>
@@ -91,6 +91,7 @@ The flag is used to indicate that the network prefers that clients use the draft
 </t>
 <t>
 This document updates RFC4862 to indicate that the Autonomous flag in a PIO needs to be ignored if the PIO has the P flag set.
+It also updates RFC4861 to specify that the P flag indicates DHCPv6 Prefix Delegation support for clients.
 </t>
 
     </abstract>
@@ -384,6 +385,41 @@ DHCPv6 servers or relays.
 Modifications to RFC-Mandated Behaviour 
 </name>
 
+<section>
+<name>
+Changes to RFC4861
+</name>
+<t>
+This document makes the following changes to Section 4.2 of <xref target="RFC4861"/>:
+</t>
+
+<t>
+OLD TEXT:
+</t>
+<t>
+====
+</t>
+<t>
+Note: If neither M nor O flags are set, this indicates that no information is available via DHCPv6.
+</t>
+<t>
+====
+</t>
+
+<t>
+NEW TEXT:
+</t>
+<t>
+====
+</t>
+<t>
+Note: If none of M, O or P (draft-ietf-6man-pio-pflag) flags are set, this indicates that no information is available via DHCPv6.
+</t>
+<t>
+====
+</t>
+
+</section>
 <section>
 <name>
 Changes to RFC4862
