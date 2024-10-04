@@ -566,7 +566,7 @@ Sending DHCPv6 packets  may reveal some minor additional information about the h
     <section anchor="Acknowledgements" numbered="false">
       <name>Acknowledgements</name>
 <t>
-Thanks to Nick Buraglio, Brian Carpenter, Tim Chown, David Farmer, Fernando Gont, Susan Hares, Dirk Von Hugo, Mahesh Jethanandani, Suresh Krishnan, Ted Lemon, Andrew McGregor, Erik Nordmark, Tomek Mrugalski, Michael Richardson, John Scudder, Ole Trøan, Timothy Winters for the discussions, reviews, the input and all contributions.
+Thanks to Nick Buraglio, Brian Carpenter, Tim Chown, David Farmer, Fernando Gont, Susan Hares, Dirk Von Hugo, Mahesh Jethanandani, Suresh Krishnan, Ted Lemon, Andrew McGregor, Erik Nordmark, Tomek Mrugalski, Michael Richardson, John Scudder, Ole Trøan, Eric Vyncke and Timothy Winters for the discussions, reviews, the input and all contributions.
 </t>
     </section>
     
