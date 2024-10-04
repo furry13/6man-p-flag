@@ -106,7 +106,7 @@ This document updates RFC4862 to indicate that the Autonomous flag in a PIO need
 This model provides devices with large IPv6 address space they can use to create addresses for communication, individually number virtual machines (VM)s or containers, or extend the network to downstream devices. It also provides scalability benefits on large networks because network infrastructure devices do not need to maintain per-address state, such as IPv6 neighbor cache, Source Address Validation Improvement (SAVI, <xref target="RFC7039"/>)  mappings, Virtual eXtensible Local Area Network (VXLAN, <xref target="RFC7348"/>) routes, etc.
 </t>
 <t>
-On smaller networks, however, this model may not be appropriate, because scaling to support multiple individual IPv6 addresses per device is less of a concern. Also, many smaller networks currently offer prefix delegation but assume that a limited number of specialized devices and/or applications will require delegated prefixes, and thus do not allocate enough address space to offer prefixes to every device that connects to the network. For example, if hosts enable <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> on a home network that only receives a /60 from the ISP, and each host obtains a /64 prefix, then the network will run out of prefixes after 15 devices have been connected.
+On networks with fewer devices, however, this model may not be appropriate, because scaling to support multiple individual IPv6 addresses per device is less of a concern. Also, many home networks currently offer prefix delegation but assume that a limited number of specialized devices and/or applications will require delegated prefixes, and thus do not allocate enough address space to offer prefixes to every device that connects to the network. For example, if hosts enable <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> on a home network that only receives a /60 from the ISP, and each host obtains a /64 prefix, then the network will run out of prefixes after 15 devices have been connected.
 </t>
 <t>
 Therefore, to safely roll out <xref target="I-D.ietf-v6ops-dhcp-pd-per-device"/> implementations on the client side, it is necessary to have a mechanism for the network to signal to the host which address assignment method is preferred.
@@ -243,7 +243,7 @@ If the network desires to delegate prefixes to devices that support DHCPv6 Prefi
 <section anchor="Router">
 <name>Router Behaviour</name>
 <t>
-Routers SHOULD set the P flag to zero by default, unless explicitly configured by the administrator, and SHOULD allow the operator to set the P flag value for any given prefix advertized in a PIO.
+Routers SHOULD set the P flag to zero by default, unless explicitly configured by the administrator, and SHOULD allow the operator to set the P flag value for any given prefix advertised in a PIO.
 Routers MUST allow the P flag to be configured separately from the A flag.  In particular, enabling or disabling the P flag MUST not trigger automatic changes in the A flag value set by the router.
 </t>
 </section>
@@ -326,8 +326,7 @@ The host MAY form as many IPv6 addresses from the prefix as it chooses.
 The host MAY use the prefix to provide IPv6 addresses to internal components such as virtual machines or containers.
 </li>
 <li>
-The host MAY use the prefix to allow devices directly connected to it to obtain IPv6 addresses. For example, the host MAY route traffic for that prefix to the interface and send a Router Advertisement containing a PIO for the prefix on the interface. If the host does so, and it has formed addresses from the prefix, then it MUST act as though the addresses were assigned to that interface for the purposes of Neighbour Discovery and Duplicate Address Detection.
-That interface MUST NOT be the interface the prefix is obtained from.
+The host MAY use the prefix to allow devices directly connected to it to obtain IPv6 addresses. For example, the host MAY route traffic for that prefix to the interface and send a Router Advertisement containing a PIO for the prefix on the interface. That interface MUST NOT be the interface the prefix is obtained from. If the host advertises the prefix on an interface, and it has formed addresses from the prefix, then it MUST act as though the addresses were assigned to that interface for the purposes of Neighbour Discovery and Duplicate Address Detection.
 </li>
 </ul>
 
