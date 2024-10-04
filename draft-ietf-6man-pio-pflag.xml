@@ -349,7 +349,7 @@ by <xref target="RFC7084"/>.
 <name>On-link Communication</name>
 <t>
 When the network delegates unique prefixes to clients, each client will consider other client's destination addresses to be off-link, because those addresses are from the delegated prefixes and are not within any on-link prefix. When a client sends traffic to another client, packets will initially be sent to the default router. The router may respond with an ICMPv6 redirect message (Section 4.5 of [RFC4861]). If the client receives and accepts the redirect, then traffic can flow directly from device to device. Therefore, hosts supporting the P flag SHOULD process redirects unless configured otherwise.
-Hosts which do not process ICMPv6 redirects, and routers, which never process ICMPv6 redirects may experience higher latency while communicating to prefixes delegated to other clients on the same link.
+Hosts which do not process ICMPv6 redirects, and routers, which do not act on ICMPv6 redirects, may experience higher latency while communicating to prefixes delegated to other clients on the same link.
 </t>
 </section>
 
