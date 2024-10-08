@@ -413,7 +413,7 @@ NEW TEXT:
 ====
 </t>
 <t>
-Note: If none of M, O or P (draft-ietf-6man-pio-pflag) flags are set, this indicates that no information is available via DHCPv6.
+Note: If none of M, O, or P (draft-ietf-6man-pio-pflag) flags are set, this indicates that no information is available via DHCPv6.
 </t>
 <t>
 ====
